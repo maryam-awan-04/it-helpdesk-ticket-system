@@ -1,9 +1,12 @@
 import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from .routes import auth, admin, user
+
+from .routes import admin, auth, user
 
 db = SQLAlchemy()
+
 
 def create_app():
     app = Flask(__name__)

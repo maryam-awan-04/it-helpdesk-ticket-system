@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
+
 from . import db
-from .enums import Role, Status, Department
+from .enums import Department, Role, Status
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,6 +13,7 @@ class User(db.Model):
     role = db.Column(db.Enum(Role), nullable=False)
 
     tickets = db.relationship("Ticket", backref="creator", lazy=True)
+
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)

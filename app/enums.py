@@ -1,8 +1,10 @@
 from enum import Enum
 
+
 class Role(Enum):
     ADMIN = "Admin"
     USER = "User"
+
 
 class Status(Enum):
     NEW = "New"
@@ -10,6 +12,7 @@ class Status(Enum):
     ON_HOLD = "On Hold"
     RESOLVED = "Resolved"
     CLOSED = "Closed"
+
 
 class Department(Enum):
     PO = "Product and Operations"
