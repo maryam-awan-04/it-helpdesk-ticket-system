@@ -1,0 +1,127 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #007F00 50%, #ffffff 50%);
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    min-height: 50vh;
+    margin: 0 auto;
+    box-shadow: 16px 16px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.left-panel {
+    background-color: #007F00;
+    color: #ffffff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-center;
+    width: 50%;
+    min-height: 100%;
+}
+
+.logo {
+    display: flex; flex-direction: column;
+    align-items: center;
+}
+
+.logo img {
+    height: 200px;
+    width: auto;
+}
+
+.right-panel {
+    padding: 30px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.content-box {
+    width: 100%;
+}
+
+.content-box h2 {
+    margin-bottom: 20px;
+    color: #007F00;
+    font-size: 28px;
+}
+
+form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-control {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #99CC00;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.forgot-password {
+    color: #99CC00;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.sign-in-button {
+    background-color: #99CC00;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+.sign-in-button:hover {
+    background-color: #007F00;
+}

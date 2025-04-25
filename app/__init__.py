@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,14 +12,20 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
+    # Load environment variables
+    load_dotenv()
+
+    # Set the secret key
+    app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
+
+    # Configure and initialise the database
     base_dir = os.path.abspath(os.path.dirname(__file__))
     db_path = os.path.join(base_dir, "../helpdesk.db")
-
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
     db.init_app(app)
 
+    # Register blueprints
     app.register_blueprint(auth.bp)
     app.register_blueprint(admin.bp)
     app.register_blueprint(user.bp)
