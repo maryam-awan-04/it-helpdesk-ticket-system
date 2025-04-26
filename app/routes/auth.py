@@ -5,7 +5,8 @@ e.g. login, registration, logout
 
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-from app.forms import LoginForm, RegistrationForm
+from app.forms.login import LoginForm
+from app.forms.registration import RegistrationForm
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -13,10 +14,14 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+
     if form.validate_on_submit():
-        # Authentication logic
-        flash("Login successful", "success")
-        return redirect(url_for(""))  # add redirect URL
+        # Direct user to dashboard according to role
+        if form.user.role == "Admin":
+            return redirect(url_for("admin.dashboard"))
+
+        return redirect(url_for("user.dashboard"))
+
     return render_template("auth/login.html", form=form)
 
 
@@ -28,12 +33,6 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        # Check if email is already registered
-        existing_user = User.query.filter_by(email=form.email.data).first()
-        if existing_user:
-            flash("Email already registered. Please sign in.", "error")
-            return redirect(url_for("auth.register"))
-
         # Create new user with hashed password
         input_password = form.password.data
         hashed = bcrypt.generate_password_hash(input_password).decode("utf-8")

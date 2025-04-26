@@ -1,11 +1,11 @@
 """
-Forms for the Flask application
-e.g. login, registration
+Form to handle user registration
 """
 
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
+from wtforms.validators import (DataRequired, Email, EqualTo, Length, Regexp,
+                                ValidationError)
 
 MESSAGES = [
     "First name must contain only letters.",
@@ -13,16 +13,6 @@ MESSAGES = [
     "Password must be at least 8 characters long.",
     "Passwords must match.",
 ]
-
-
-class LoginForm(FlaskForm):
-    """
-    Form for user login
-    """
-
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Sign in")
 
 
 class RegistrationForm(FlaskForm):
@@ -65,3 +55,13 @@ class RegistrationForm(FlaskForm):
         ],
     )
     submit = SubmitField("Register")
+
+    def validate_email(self, field):
+        """
+        Validate that email does not already exist in the database
+        """
+        from app.models import User
+
+        user = User.query.filter_by(email=field.data).first()
+        if user:
+            raise ValidationError("Email already registered. Please sign in.")
