@@ -1,11 +1,6 @@
 from enum import Enum
 
 
-class Role(Enum):
-    ADMIN = "Admin"
-    USER = "User"
-
-
 class Status(Enum):
     NEW = "New"
     IN_PROGRESS = "In Progress"

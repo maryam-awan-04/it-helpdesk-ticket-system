@@ -1,7 +1,11 @@
+"""
+Models for the SQLite database
+"""
+
 from datetime import datetime, timezone
 
 from . import db
-from .enums import Department, Role, Status
+from .enums import Department, Status
 
 
 class User(db.Model):
@@ -10,7 +14,7 @@ class User(db.Model):
     surname = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
-    role = db.Column(db.Enum(Role), nullable=False)
+    role = db.Column(db.String(256), nullable=False)
 
     tickets = db.relationship("Ticket", backref="creator", lazy=True)
 

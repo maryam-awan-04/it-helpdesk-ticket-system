@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Help Desk | Sign In</title>
+    <title>IT Help Desk | Register</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='auth.css') }}">
 </head>
@@ -22,26 +22,68 @@
                     <div class="form-group">
                         <label for="firstname">{{ form.firstname.label }}</label>
                         {{ form.firstname(class="form-control", placeholder="Firstname") }}
+                        {% if form.firstname.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.firstname.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="surname">{{ form.surname.label }}</label>
                         {{ form.surname(class="form-control", placeholder="Surname") }}
+                        {% if form.surname.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.surname.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="email">{{ form.email.label }}</label>
                         {{ form.email(class="form-control", placeholder="Email") }}
+                        {% if form.email.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.email.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="role">{{ form.role.label }}</label>
                         {{ form.role(class="form-control") }}
+                        {% if form.role.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.role.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="password">{{ form.password.label }}</label>
                         {{ form.password(class="form-control", placeholder="Password") }}
+                        {% if form.password.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.password.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="confirm_password">{{ form.confirm_password.label }}</label>
                         {{ form.confirm_password(class="form-control", placeholder="Password") }}
+                        {% if form.confirm_password.errors %}
+                            <ul class="error-messages">
+                                {% for error in form.confirm_password.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                     <div class="form-options">
                         <a href="{{ url_for('auth.login') }}" class="alternative_auth">Already have an account? Sign in</a>
@@ -51,5 +93,41 @@
             </div>
         </div>
     </div>
+
+    <div id="customAlert" class="custom-alert">
+        <div class="alert-content">
+            <p id="alertMessage"></p>
+            <button id="alertOkayButton" class="sign-in-button">Sign in</button>
+        </div>
+    </div>
+
+    <!-- Enable custom alerts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            const customAlert = document.getElementById("customAlert");
+            const alertMessage = document.getElementById("alertMessage");
+            const okayButton = document.getElementById("alertOkayButton");
+
+            function showAlert(message) {
+                alertMessage.textContent = message;
+                customAlert.style.display = "flex";
+            }
+
+            function hideAlertAndRedirect() {
+                customAlert.style.display = "none";
+                window.location.href = "{{ url_for('auth.login') }}";
+            }
+
+            if (flashes.length > 0) {
+                flashes.forEach(function(flash) {
+                    showAlert(flash[1]);
+                });
+            }
+
+            okayButton.addEventListener("click", hideAlertAndRedirect);
+        });
+    </script>
+
 </body>
 </html>
