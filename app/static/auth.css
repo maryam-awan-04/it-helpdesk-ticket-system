@@ -15,7 +15,7 @@ body {
     height: auto;
     min-height: 50vh;
     margin: 0 auto;
-    box-shadow: 16px 16px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     overflow: hidden;
     justify-content: center;
@@ -86,6 +86,25 @@ form {
     box-sizing: border-box;
     font-size: 14px;
     transition: border-color 0.3s ease;
+    background-color: #ffffff;
+}
+
+select#role.form-control {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #ffffff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select#role.form-control:focus {
+    outline: none;
+    border-color: #99CC00;
 }
 
 .form-control:focus {
@@ -100,13 +119,13 @@ form {
     margin-bottom: 20px;
 }
 
-.forgot-password {
+.alternative_auth {
     color: #99CC00;
     text-decoration: none;
     font-size: 14px;
 }
 
-.forgot-password:hover {
+.alternative_auth:hover {
     text-decoration: underline;
 }
 

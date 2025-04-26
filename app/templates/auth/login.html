@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Help Desk | Sign In</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='auth.css') }}">
 </head>
 <body>
     <div class="container">
@@ -28,7 +28,7 @@
                         {{ form.password(class="form-control", placeholder="Password") }}
                     </div>
                     <div class="form-options">
-                        <a href="{{ url_for('auth.register') }}" class="forgot-password">Don't have an account? Register</a>
+                        <a href="{{ url_for('auth.register') }}" class="alternative_auth">Don't have an account? Register</a>
                         {{ form.submit(class="btn sign-in-button", value="Sign in") }}
                     </div>
                 </form>

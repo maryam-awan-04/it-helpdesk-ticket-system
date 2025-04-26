@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Help Desk | Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="IT Help Desk Logo">
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="content-box">
+                <h2>Register New Account</h2>
+                <form method="post" action="{{ url_for('auth.register') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label for="firstname">{{ form.firstname.label }}</label>
+                        {{ form.firstname(class="form-control", placeholder="Firstname") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">{{ form.surname.label }}</label>
+                        {{ form.surname(class="form-control", placeholder="Surname") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="email">{{ form.email.label }}</label>
+                        {{ form.email(class="form-control", placeholder="Email") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="role">{{ form.role.label }}</label>
+                        {{ form.role(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="password">{{ form.password.label }}</label>
+                        {{ form.password(class="form-control", placeholder="Password") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">{{ form.confirm_password.label }}</label>
+                        {{ form.confirm_password(class="form-control", placeholder="Password") }}
+                    </div>
+                    <div class="form-options">
+                        <a href="{{ url_for('auth.login') }}" class="alternative_auth">Already have an account? Sign in</a>
+                        {{ form.submit(class="btn sign-in-button", value="Register") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
