@@ -1,5 +1,5 @@
 """
-Form to handle ticket creation
+Form to handle ticket creation or update
 """
 
 from flask_wtf import FlaskForm
@@ -7,9 +7,9 @@ from wtforms import SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 
 
-class CreateTicket(FlaskForm):
+class Ticket(FlaskForm):
     """
-    Form for ticket creation
+    Form for ticket creation or update
     """
 
     request_type = SelectField(

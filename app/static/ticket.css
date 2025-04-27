@@ -266,3 +266,106 @@ select#request_type.form-control:focus {
 .logout-button:hover {
     background-color: #A32600;
 }
+
+.history-container {
+    background-color: #ffffff;
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: auto;
+    padding: 25px;
+    max-height: 100vh;
+}
+
+.history-container h2 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.ticket-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ticket-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ticket-item:last-child {
+    border-bottom: none;
+}
+
+.ticket-item:hover {
+    background-color: #f9f9f9;
+}
+
+.selected-ticket {
+    background-color: #e6ffe6;
+}
+
+.edit-form-container {
+    background-color: #ffffff;
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.edit-form-container h2 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.custom-alert {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.alert-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 5px;
+    position: relative;
+}
+
+#alertMessage {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+#alertOkayButton {
+    display: block;
+    margin: 10px auto 0;
+    background-color: #99CC00;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+#alertOkayButton:hover {
+    background-color: #007F00;
+}
