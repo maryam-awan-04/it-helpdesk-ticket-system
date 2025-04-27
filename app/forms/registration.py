@@ -37,7 +37,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     role = SelectField(
         "Role",
-        choices=[("User", "User"), ("Admin", "Admin")],
+        choices=[("User"), ("Admin")],
         validators=[DataRequired()],
     )
     password = PasswordField(
