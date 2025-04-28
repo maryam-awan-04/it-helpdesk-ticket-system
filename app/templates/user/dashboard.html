@@ -3,13 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Help Desk | Admin</title>
+    <title>IT Help Desk | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='user.css') }}">
 </head>
 <body>
-    <div class="container">
-        <p>Welcome to the User dashboard</p>
+    <div class="main-container">
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="IT Help Desk Logo" class="logo">
+                </div>
+                <div class="user-info">
+                    <h2>Welcome [User]!</h2>
+                </div>
+                <nav class="navigation">
+                    <ul>
+                        <li class="active"><a href="#">Dashboard</a></li>
+                        <li><a href="{{ url_for('user.create_ticket') }}">Create New Ticket</a></li>
+                        <li><a href="{{ url_for('user.update_ticket') }}">Update Ticket</a></li>
+                    </ul>
+                </nav>
+                <div class="logout-container">
+                    <button class="logout-button">Sign Out</button>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="dashboard-summary">
+                <div class="summary-box">
+                    <h3>Tickets Opened</h3>
+                    <div class="count">{% if open_tickets %}{{ open_tickets|length }}{% else %}0{% endif %}</div>
+                </div>
+                <div class="summary-box">
+                    <h3>Tickets In Progress</h3>
+                    <div class="count">{% if in_progress_tickets %}{{ in_progress_tickets|length }}{% else %}0{% endif %}</div>
+                </div>
+                <div class="summary-box">
+                    <h3>Tickets On Hold</h3>
+                    <div class="count">{% if on_hold_tickets %}{{ on_hold_tickets|length }}{% else %}0{% endif %}</div>
+                </div>
+                <div class="summary-box">
+                    <h3>Tickets Resolved</h3>
+                    <div class="count">{% if resolved_tickets %}{{ resolved_tickets|length }}{% else %}0{% endif %}</div>
+                </div>
+                <div class="summary-box">
+                    <h3>Tickets Closed</h3>
+                    <div class="count">{% if closed_tickets %}{{ closed_tickets|length }}{% else %}0{% endif %}</div>
+                </div>
+            </div>
+            <div class="ticket-history-container">
+                <div class="ticket-history-header">
+                    <h2>Ticket History</h2>
+                    <div class="filter-container">
+                        <label for="filterBy" class="filter-label">Filter By:</label>
+                        <select id="filterBy" class="filter-select">
+                            <option value="">All</option>
+                            <option value="date">Date</option>
+                            <option value="request_type">Request Type</option>
+                            <option value="status">Status</option>
+                            <option value="title">Title</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="ticket-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if all_tickets %}
+                            {% for ticket in all_tickets %}
+                                <tr>
+                                    <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ ticket.title }}</td>
+                                    <td>{{ ticket.status }}</td>
+                                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4">No ticket history available.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
 </html>
