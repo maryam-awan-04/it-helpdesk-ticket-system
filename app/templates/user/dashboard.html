@@ -93,5 +93,38 @@
             </div>
         </div>
     </div>
+
+    <div id="customAlert" class="custom-alert" style="display: none;">
+        <div class="alert-content">
+            <p id="alertMessage">Are you sure you want to sign out?</p>
+            <button id="alertYesButton">Yes</button>
+            <button id="alertNoButton">No</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const logoutButton = document.querySelector(".logout-button");
+            const customAlert = document.getElementById("customAlert");
+            const alertYesButton = document.getElementById("alertYesButton");
+            const alertNoButton = document.getElementById("alertNoButton");
+
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    customAlert.style.display = "flex";
+                });
+            }
+
+            alertYesButton.addEventListener("click", function() {
+                window.location.href = "{{ url_for('auth.logout') }}";
+            });
+
+            alertNoButton.addEventListener("click", function() {
+                customAlert.style.display = "none";
+            });
+        });
+    </script>
+
 </body>
 </html>

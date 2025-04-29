@@ -51,3 +51,14 @@ def register():
         flash("Registration successful! Please sign in.", "success")
 
     return render_template("auth/register.html", form=form)
+
+
+@bp.route("/logout", methods=["GET", "POST"])
+def logout():
+    from flask import session
+
+    # Clear the session
+    session.clear()
+
+    flash("You have been logged out.", "success")
+    return redirect(url_for("auth.login"))

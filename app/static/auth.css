@@ -195,3 +195,23 @@ select#role.form-control:focus,
 .error-messages li {
     margin-bottom: 5px;
 }
+
+#alertYesButton,
+#alertNoButton {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#alertYesButton {
+    background-color: #d9534f;
+    color: white;
+}
+
+#alertNoButton {
+    background-color: #ccc;
+    color: #333;
+}
