@@ -9,4 +9,4 @@ bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 @bp.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-    return render_template("dashboards/admin.html")
+    return render_template("admin/dashboard.html")
