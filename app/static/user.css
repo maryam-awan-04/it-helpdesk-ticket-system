@@ -28,45 +28,6 @@
     margin-top: 10px;
 }
 
-.edit-button,
-.create-ticket-button {
-    background-color: #ddd;
-    color: #777;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
-    cursor: default;
-    margin-top: 10px;
-}
-
-.edit-button:hover,
-.create-ticket-button:hover {
-    background-color: #ccc;
-}
-
-.edit-button:disabled,
-.create-ticket-button:disabled,
-.submit-button:disabled {
-    background-color: #ddd;
-    color: #777;
-    cursor: default;
-}
-
-.edit-button:not(:disabled),
-.create-ticket-button:not(:disabled) {
-    background-color: #99CC00;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-.edit-button:not(:disabled):hover,
-.create-ticket-button:not(:disabled):hover {
-    background-color: #80A300;
-}
-
 .ticket-history-container {
     background-color: #ffffff;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
