@@ -1,107 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Help Desk | Create Ticket</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
-</head>
-<body>
-    <div class="main-container">
-        <div class="sidebar-container">
-            <div class="sidebar">
-                <div class="logo-container">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="IT Help Desk Logo" class="logo">
+{% extends 'user/base.html' %}
+{% block title %}Create Ticket{% endblock %}
+{% block content %}
+    <div class="form-container">
+        <div class="create-ticket-form">
+            <h2>Create New Ticket</h2>
+            <form method="POST" id="createTicketForm">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.request_type.label }}
+                    {{ form.request_type(class="form-control", id="request_type") }}
+                    {% if form.request_type.errors %}
+                        <ul class="errors">
+                        {% for error in form.request_type.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
-                <div class="user-info">
-                    <h2>Welcome [User]!</h2>
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control", id="title") }}
+                    {% if form.title.errors %}
+                        <ul class="errors">
+                        {% for error in form.title.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
-                <nav class="navigation">
-                    <ul>
-                        <li><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-                        <li class="active"><a href="#">Create New Ticket</a></li>
-                        <li><a href="{{ url_for('user.update_ticket') }}">Update Ticket</a></li>
-                    </ul>
-                </nav>
-                <div class="logout-container">
-                    <button class="logout-button">Sign Out</button>
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control", rows="5", id="description") }}
+                    {% if form.description.errors %}
+                        <ul class="errors">
+                        {% for error in form.description.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
-            </div>
+                <button type="button" class="submit-button" id="submitDetails">Submit Details</button>
+            </form>
         </div>
-        <div class="main-content">
-            <div class="form-container">
-                <div class="create-ticket-form">
-                    <h2>Create New Ticket</h2>
-                    <form method="POST" id="createTicketForm">
-                        {{ form.hidden_tag() }}
-                        <div class="form-group">
-                            {{ form.request_type.label }}
-                            {{ form.request_type(class="form-control", id="request_type") }}
-                            {% if form.request_type.errors %}
-                                <ul class="errors">
-                                {% for error in form.request_type.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            {{ form.title.label }}
-                            {{ form.title(class="form-control", id="title") }}
-                            {% if form.title.errors %}
-                                <ul class="errors">
-                                {% for error in form.title.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            {{ form.description.label }}
-                            {{ form.description(class="form-control", rows="5", id="description") }}
-                            {% if form.description.errors %}
-                                <ul class="errors">
-                                {% for error in form.description.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                        <button type="button" class="submit-button" id="submitDetails">Submit Details</button>
-                    </form>
-                </div>
-            </div>
-            <div class="details-container">
-                <div class="ticket-details" id="ticketDetails">
-                    <h2>Ticket Details</h2>
-                    <p>Date: <span id="ticketDate">-</span></p>
-                    <p>Email: <span id="ticketEmail">-</span></p>
-                    <p>Request Type: <span id="ticketRequestType">-</span></p>
-                    <p>Title: <span id="ticketTitle">-</span></p>
-                    <p>Description: <span id="ticketDescription">-</span></p>
-                    <div class="button-container">
-                        <button type="button" class="edit-button" id="editDetails" disabled>Edit Ticket</button>
-                        <form method="POST">
-                            {{ form.hidden_tag() }}
-                            <input type="hidden" id="final_request_type" name="request_type">
-                            <input type="hidden" id="final_title" name="title">
-                            <input type="hidden" id="final_description" name="description">
-                            <button type="submit" class="create-ticket-button" id="createTicketFinal" disabled name="create_ticket">Create Ticket</button>
-                        </form>
-                    </div>
-                </div>
+    </div>
+    <div class="details-container">
+        <div class="ticket-details" id="ticketDetails">
+            <h2>Ticket Details</h2>
+            <p>Date: <span id="ticketDate">-</span></p>
+            <p>Email: <span id="ticketEmail">-</span></p>
+            <p>Request Type: <span id="ticketRequestType">-</span></p>
+            <p>Title: <span id="ticketTitle">-</span></p>
+            <p>Description: <span id="ticketDescription">-</span></p>
+            <div class="button-container">
+                <button type="button" class="edit-button" id="editDetails" disabled>Edit Ticket</button>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" id="final_request_type" name="request_type">
+                    <input type="hidden" id="final_title" name="title">
+                    <input type="hidden" id="final_description" name="description">
+                    <button type="submit" class="create-ticket-button" id="createTicketFinal" disabled name="create_ticket">Create Ticket</button>
+                </form>
             </div>
         </div>
     </div>
-
-    <div id="customAlert" class="custom-alert" style="display: none;">
-        <div class="alert-content">
-            <p id="alertMessage">Are you sure you want to sign out?</p>
-            <button id="alertYesButton">Yes</button>
-            <button id="alertNoButton">No</button>
-        </div>
-    </div>
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -166,31 +127,4 @@
         });
     });
     </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const logoutButton = document.querySelector(".logout-button");
-            const customAlert = document.getElementById("customAlert");
-            const alertYesButton = document.getElementById("alertYesButton");
-            const alertNoButton = document.getElementById("alertNoButton");
-
-            if (logoutButton) {
-                logoutButton.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    customAlert.style.display = "flex";
-                });
-            }
-
-            alertYesButton.addEventListener("click", function() {
-                window.location.href = "{{ url_for('auth.logout') }}";
-            });
-
-            alertNoButton.addEventListener("click", function() {
-                customAlert.style.display = "none";
-            });
-        });
-    </script>
-
-
-</body>
-</html>
+{% endblock %}

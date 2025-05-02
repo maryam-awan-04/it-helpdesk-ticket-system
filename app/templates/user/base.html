@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='user.css') }}">
+{% endblock %}
+{% block sidebar %}
+    <div class="sidebar-container">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="IT Help Desk Logo" class="logo">
+            </div>
+            <div class="user-info">
+                <h1>Welcome [User]!</h1>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li {% if request.endpoint == 'user.dashboard' %}class="active"{% endif %}><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+                    <li {% if request.endpoint == 'user.create_ticket' %}class="active"{% endif %}><a href="{{ url_for('user.create_ticket') }}">Create New Ticket</a></li>
+                    <li {% if request.endpoint == 'user.update_ticket' %}class="active"{% endif %}><a href="{{ url_for('user.update_ticket') }}">Update Ticket</a></li>
+                </ul>
+            </nav>
+            <div class="logout-container">
+                <button class="logout-button">Sign Out</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<div id="customAlert" class="custom-alert" style="display: none;">
+    <div class="alert-content">
+        <p id="alertMessage">Are you sure you want to sign out?</p>
+        <button id="alertYesButton">Yes</button>
+        <button id="alertNoButton">No</button>
+    </div>
+</div>
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='base.js') }}"></script>
+{% endblock %}

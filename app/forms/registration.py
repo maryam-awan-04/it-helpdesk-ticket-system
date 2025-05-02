@@ -37,7 +37,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     role = SelectField(
         "Role",
-        choices=[("User"), ("Admin")],
+        choices=[("Select"), ("User"), ("Admin")],
         validators=[DataRequired()],
     )
     password = PasswordField(
@@ -65,3 +65,10 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=field.data).first()
         if user:
             raise ValidationError("Email already registered. Please sign in.")
+
+    def validate_role(self, field):
+        """
+        Validate that the role is not "Select"
+        """
+        if field.data == "Select":
+            raise ValidationError("Please select a valid role type.")
