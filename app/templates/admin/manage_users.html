@@ -1,0 +1,229 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+    <div class="user-list-container">
+        <div class="user-list-header">
+            <h2>User Information</h2>
+        </div>
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_users %}
+                    {% for user in all_users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.surname }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="4">No user information available.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="edit-form-container">
+        <h2>Edit User Details</h2>
+        <form method="POST" id="createUser">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="firstname">{{ form.firstname.label }}</label>
+                {{ form.firstname(class="form-control") }}
+                {% if form.firstname.errors %}
+                    <ul class="errors">
+                        {% for error in form.firstname.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="surname">{{ form.surname.label }}</label>
+                {{ form.surname(class="form-control") }}
+                {% if form.surname.errors %}
+                    <ul class="errors">
+                        {% for error in form.surname.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="email">{{ form.email.label }}</label>
+                {{ form.email(class="form-control") }}
+                {% if form.email.errors %}
+                    <ul class="errors">
+                        {% for error in form.email.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="role">{{ form.role.label }}</label>
+                {{ form.role(class="form-control") }}
+                {% if form.role.errors %}
+                    <ul class="errors">
+                        {% for error in form.role.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <button type="button" class="submit-button" id="submitDetails">Submit Details</button>
+        </form>
+    </div>
+
+    <div class="details-container">
+        <div class="user-details" id="userDetails">
+            <h2>User Details</h2>
+            <p>First name: <span id="userFirstname">-</span></p>
+            <p>Surname: <span id="userSurname">-</span></p>
+            <p>Email: <span id="userEmail">-</span></p>
+            <p>Role: <span id="userRole">-</span></p>
+            <div class="button-container">
+                <button type="button" class="edit-button" id="editDetails" disabled>Edit Details</button>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" id="final_user_id" name="user_id">
+                    <input type="hidden" id="final_firstname" name="firstname">
+                    <input type="hidden" id="final_surname" name="surname">
+                    <input type="hidden" id="final_email" name="email">
+                    <input type="hidden" id="final_role" name="role">
+                    <button type="submit" class="update-user-button" id="updateUserFinal" disabled name="update_user">Update User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlert" class="custom-alert">
+        <div class="alert-content">
+            <p id="alertMessage"></p>
+            <button id="alertOkayButton">Okay</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const userList = document.getElementById("userList");
+            const updateUserForm = document.getElementById("updateUserForm");
+            const submitEditDetailsButton = document.getElementById("submitEditDetails");
+            const userDetailsSection = document.getElementById("userDetails");
+            const editDetailsButton = document.getElementById("editDetails");
+            const updateUserFinalButton = document.getElementById("updateUserFinal");
+            const firstnameEdit = document.getElementById("firstname_edit");
+            const surnameEdit = document.getElementById("surname_edit");
+            const emailEdit = document.getElementById("email_edit");
+            const roleEdit = document.getElementById("role_edit");
+            const finalFirstname = document.getElementById("final_firstname");
+            const finalSurname = document.getElementById("final_surname");
+            const finalEmail = document.getElementById("final_email");
+            const finalRole = document.getElementById("final_role");
+            const userItems = document.querySelectorAll(".user-item");
+            const userDetailSpans = {
+                firstname: document.getElementById("userFirstname"),
+                surname: document.getElementById("userSurname"),
+                email: document.getElementById("userEmail"),
+                requestType: document.getElementById("userRequestType"),
+                role: document.getElementById("userRole"),
+            };
+            let selectedUserId = null;
+
+            // Custom alert
+            const customAlert = document.getElementById("customAlert");
+            const alertMessage = document.getElementById("alertMessage");
+            const okayButton = document.getElementById("alertOkayButton");
+
+            function showAlert(message) {
+                alertMessage.textContent = message;
+                customAlert.style.display = "flex";
+            }
+
+            function hideAlert() {
+                customAlert.style.display = "none";
+            }
+
+            okayButton.addEventListener("click", hideAlert);
+
+            // User selection and edit form
+            userItems.forEach(item => {
+                item.addEventListener("click", function() {
+                    // Remove selection from other items
+                    userItems.forEach(otherItem => {
+                        otherItem.classList.remove("selected-user");
+                    });
+                    // Add selection to the clicked item
+                    this.classList.add("selected-user");
+                    selectedUserId = this.dataset.userId;
+                    firstnameEdit.value = this.dataset.firstname;
+                    surnameEdit.value = this.dataset.surname;
+                    emailEdit.value = this.dataset.email;
+                    roleEdit.value = this.dataset.role;
+
+                    // Enable the submit changes button
+                    submitEditDetailsButton.disabled = false;
+                });
+            });
+
+            submitEditDetailsButton.addEventListener("click", function(event) {
+                event.preventDefault();
+
+                if (selectedUserId) {
+                    const firstname = firstnameEdit.value;
+                    const surname = surnameEdit.value;
+                    const email = emailEdit.value;
+                    const role = roleEdit.value;
+
+                    // Update user details display
+                    userDetailSpans.firstname.textContent = firstname;
+                    userDetailSpans.surname.textContent = surname;
+                    userDetailSpans.email.textContent = email;
+                    userDetailSpans.role.textContent = role;
+
+                    // Update hidden form fields for final submission
+                    finalFirstname.value = firstname;
+                    finalSurname.value = surname;
+                    finalEmail.value = email;
+                    finalRole.value = role;
+
+                    // Disable the edit form
+                    firstnameEdit.disabled = true;
+                    surnameEdit.disabled = true;
+                    emailEdit.disabled = true;
+                    roleEdit.disabled = true;
+                    submitEditDetailsButton.disabled = true;
+
+                    // Enable the confirm update buttons
+                    editDetailsButton.disabled = false;
+                    updateUserFinalButton.disabled = false;
+                } else {
+                    showAlert("Please select a user to update.");
+                }
+            });
+
+            editDetailsButton.addEventListener("click", function() {
+                // Re-enable the edit form
+                firstnameEdit.disabled = false;
+                surnameEdit.disabled = false;
+                emailEdit.disabled = false;
+                roleEdit.disabled = false;
+                submitEditDetailsButton.disabled = false;
+
+                // Disable the confirm update buttons
+                editDetailsButton.disabled = true;
+                updateUserFinalButton.disabled = true;
+            });
+        });
+    </script>
+{% endblock %}

@@ -236,28 +236,33 @@ select#role.form-control:focus {
     margin-bottom: 5px;
 }
 
-.ticket-table {
+.ticket-table,
+.user-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.ticket-table th, .ticket-table td {
+.ticket-table th, .ticket-table td,
+.user-table th, .user-table td {
     padding: 10px 15px;
     text-align: left;
     border-bottom: 1px solid #eee;
 }
 
-.ticket-table th {
+.ticket-table th
+.user-table th{
     background-color: #f9f9f9;
     color: #555;
     font-weight: bold;
 }
 
-.ticket-table tr:last-child td {
+.ticket-table tr:last-child td,
+.user-table tr:last-child td {
     border-bottom: none;
 }
 
-.ticket-table tr:hover {
+.ticket-table tr:hover,
+.user-table tr:hover {
     background-color: #f5f5f5;
 }
 
@@ -285,7 +290,8 @@ select#role.form-control:focus {
 }
 
 .edit-button,
-.create-update-ticket-button {
+.create-update-ticket-button,
+.update-user-button {
     background-color: #ddd;
     color: #777;
     padding: 10px 20px;
@@ -299,26 +305,30 @@ select#role.form-control:focus {
 }
 
 .edit-button:hover,
-.create-update-ticket-button:hover {
+.create-update-ticket-button:hover,
+.update-user-button:hover {
     background-color: #ccc;
 }
 
 .edit-button:disabled,
 .create-update-ticket-button:disabled,
-.submit-button:disabled {
+.submit-button:disabled,
+.update-user-button:disabled {
     background-color: #ddd;
     color: #777;
     cursor: default;
 }
 
 .edit-button:not(:disabled),
-.create-update-ticket-button:not(:disabled) {
+.create-update-ticket-button:not(:disabled),
+.update-user-button:not(:disabled) {
     background-color: #99CC00;
     color: #ffffff;
     cursor: pointer;
 }
 
 .edit-button:not(:disabled):hover,
-.create-update-ticket-button:not(:disabled):hover {
+.create-update-ticket-button:not(:disabled):hover,
+.update-user-button:not(:disabled):hover {
     background-color: #80A300;
 }

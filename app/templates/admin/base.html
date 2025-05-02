@@ -15,7 +15,7 @@
                 <ul>
                     <li {% if request.endpoint == 'admin.dashboard' %}class="active"{% endif %}><a href="{{ url_for('admin.dashboard')}}">Dashboard</a></li>
                     <li {% if request.endpoint == 'admin.manage_tickets' %}class="active"{% endif %}><a href="{{ url_for('admin.manage_tickets')}}">Manage Tickets</a></li>
-                    <li {% if request.endpoint == 'admin.manage_users' %}class="active"{% endif %}><a href="#">Manage Users</a></li>
+                    <li {% if request.endpoint == 'admin.manage_users' %}class="active"{% endif %}><a href="{{ url_for('admin.manage_users')}}">Manage Users</a></li>
                 </ul>
             </nav>
             <div class="logout-container">
