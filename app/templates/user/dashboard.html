@@ -59,7 +59,6 @@
                             <td>{{ ticket.request_type }}</td>
                             <td>{{ ticket.title }}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
-                            <td>{{ ticket.status }}</td>
                             <td>{{ ticket.assigned_to }}</td>
                             <td>{{ ticket.status }}</td>
                             <td>{{ ticket.feedback_score }}</td>
@@ -71,4 +70,58 @@
             </tbody>
         </table>
     </div>
+
+    <div>
+        <form id="feedbackForm" method="POST">
+            {{ feedback_form.hidden_tag() }}
+            <input type="hidden" name="ticket_id" id="feedback-ticket-id">
+
+            <div id="feedback-popup" class="popup-overlay hidden">
+              <div class="popup-content">
+                <h2>Rate This Ticket</h2>
+
+                <div class="star-rating">
+                  {% for value, label in feedback_form.rating.choices %}
+                  <input type="radio" id="star{{ value }}" name="{{ feedback_form.rating.name }}" value="{{ value }}">
+                  <label for="star{{ value }}">&#9733;</label>
+                  {% endfor %}
+                </div>
+
+                <div id="feedback-error" class="errors"></div>
+
+                <button type="submit" id="alertOkayButton">Submit</button>
+              </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function openFeedback(ticketId) {
+            document.getElementById("feedback-ticket-id").value = ticketId;
+            document.getElementById("feedback-popup").classList.remove("hidden");
+        }
+
+        document.getElementById("feedbackForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("/user.submit-feedback", {
+            method: "POST",
+            body: formData
+        }).then(res => res.json())
+            .then(data => {
+            if (data.success) {
+                closeFeedback();
+                alert(data.message);
+                location.reload();
+            } else {
+                document.getElementById("feedback-error").textContent = data.errors?.rating?.[0] || "Something went wrong.";
+            }
+            }).catch(() => {
+            document.getElementById("feedback-error").textContent = "Network error.";
+            });
+        });
+
+    </script>
 {% endblock %}

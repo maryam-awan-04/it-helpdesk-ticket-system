@@ -226,6 +226,21 @@ select#role.form-control:focus {
     color: #333;
 }
 
+.submit-button {
+    background-color: #99CC00;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #80A300;
+}
+
 .errors {
     color: red;
     font-size: 12px;
