@@ -2,10 +2,7 @@
 Models for the SQLite database
 """
 
-from datetime import datetime, timezone
-
 from . import db
-from .enums import Department, Status
 
 
 class User(db.Model):
@@ -16,15 +13,15 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(256), nullable=False)
 
-    tickets = db.relationship("Ticket", backref="creator", lazy=True)
-
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    request_type = db.Column(db.String(100), nullable=False)
+    date_opened = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    status = db.Column(db.Enum(Status), default=Status.NEW, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    department = db.Column(db.Enum(Department), nullable=True)
+    status = db.Column(db.Text, nullable=False)
+    date_resolved = db.Column(db.DateTime, nullable=True)
+    feedback = db.Column(db.Text, nullable=True)
+    assigned_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    creator = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)

@@ -7,7 +7,7 @@ from wtforms import SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 
 
-class Ticket(FlaskForm):
+class TicketForm(FlaskForm):
     """
     Form for ticket creation or update
     """

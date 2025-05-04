@@ -9,7 +9,7 @@
                 <img src="{{ url_for('static', filename='logo.png') }}" alt="IT Help Desk Logo" class="logo">
             </div>
             <div class="user-info">
-                <h1>Welcome [User]!</h1>
+                <h1>Welcome {{ user.firstname }}!</h1>
             </div>
             <nav class="navigation">
                 <ul>

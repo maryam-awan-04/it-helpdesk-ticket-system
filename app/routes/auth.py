@@ -3,7 +3,7 @@ Authentication routes for the application
 e.g. login, registration, logout
 """
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, render_template, session, url_for
 
 from app.forms.login import LoginForm
 from app.forms.registration import RegistrationForm
@@ -16,6 +16,8 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
+        session["user_email"] = form.user.email
+
         # Direct user to dashboard according to role
         if form.user.role == "Admin":
             return redirect(url_for("admin.dashboard"))

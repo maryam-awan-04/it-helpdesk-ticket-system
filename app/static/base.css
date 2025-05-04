@@ -27,6 +27,7 @@ body {
 
 .sidebar-container {
     width: 25%;
+    max-width: 300px;
     background-color: var(--primary-color-dark);
     color: var(--background-color);
     border-radius: var(--border-radius);
@@ -123,6 +124,7 @@ h2 {
 
 .form-group {
     margin-bottom: 15px;
+    font-size: 16px;
 }
 
 .form-group label {
