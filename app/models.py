@@ -17,11 +17,11 @@ class User(db.Model):
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     request_type = db.Column(db.String(100), nullable=False)
-    date_opened = db.Column(db.DateTime, nullable=False)
+    date_opened = db.Column(db.Date, nullable=False)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     status = db.Column(db.Text, nullable=False)
-    date_resolved = db.Column(db.DateTime, nullable=True)
+    date_resolved = db.Column(db.Date, nullable=True)
     feedback = db.Column(db.Text, nullable=True)
     assigned_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     creator = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)

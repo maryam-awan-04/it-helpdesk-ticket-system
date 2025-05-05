@@ -5,6 +5,7 @@
         <div class="ticket-history-header">
             <h2>Ticket History</h2>
         </div>
+        <p>Select an Open ticket to update.</p>
         <table class="ticket-table">
             <thead>
                 <tr>
@@ -13,9 +14,6 @@
                     <th>Request Type</th>
                     <th>Title</th>
                     <th>Description</th>
-                    <th>Assigned To</th>
-                    <th>Status</th>
-                    <th>Feedback Score</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,10 +25,6 @@
                             <td>{{ ticket.request_type }}</td>
                             <td>{{ ticket.title }}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
-                            <td>{{ ticket.status }}</td>
-                            <td>{{ ticket.assigned_to }}</td>
-                            <td>{{ ticket.status }}</td>
-                            <td>{{ ticket.feedback_score }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}

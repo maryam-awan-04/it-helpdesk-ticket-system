@@ -15,15 +15,33 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 
 @bp.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
-    from app.models import User
+    from app.models import Ticket, User
 
     feedback_form = FeedbackForm()
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
 
+    # Retrieve tickets for the user
+    all_tickets = Ticket.query.filter_by(creator=user.id).all()
+
+    # Retrieve tickets by status for dashboard summary
+    open_tickets = [t for t in all_tickets if t.status == "Open"]
+    in_progress_tickets = [t for t in all_tickets if t.status == "In Progress"]
+    on_hold_tickets = [t for t in all_tickets if t.status == "On Hold"]
+    resolved_tickets = [t for t in all_tickets if t.status == "Resolved"]
+    closed_tickets = [t for t in all_tickets if t.status == "Closed"]
+
     return render_template(
-        "user/dashboard.html", feedback_form=feedback_form, user=user
+        "user/dashboard.html",
+        feedback_form=feedback_form,
+        user=user,
+        all_tickets=all_tickets,
+        open_tickets=open_tickets,
+        in_progress_tickets=in_progress_tickets,
+        on_hold_tickets=on_hold_tickets,
+        resolved_tickets=resolved_tickets,
+        closed_tickets=closed_tickets,
     )
 
 
@@ -42,10 +60,10 @@ def create_ticket():
         # Create new ticket
         new_ticket = Ticket(
             request_type=form.request_type.data,
-            date_opened=datetime.now(),
+            date_opened=datetime.now().date(),
             title=form.title.data,
             description=form.description.data,
-            status="open",
+            status="Open",
             creator=user.id,
         )
 
@@ -60,17 +78,22 @@ def create_ticket():
 
 @bp.route("/update-ticket", methods=["GET", "POST"])
 def update_ticket():
-    from app.models import User
+    from app.models import Ticket, User
 
     form = TicketForm()
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
 
+    # Retrieve tickets for the user
+    all_tickets = Ticket.query.filter_by(creator=user.id, status="Open").all()
+
     if form.validate_on_submit():
         return redirect(url_for("user.dashboard"))
 
-    return render_template("user/update_ticket.html", form=form, user=user)
+    return render_template(
+        "user/update_ticket.html", form=form, user=user, all_tickets=all_tickets
+    )
 
 
 from flask import jsonify

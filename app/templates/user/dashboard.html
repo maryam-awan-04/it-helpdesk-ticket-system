@@ -3,23 +3,23 @@
 {% block content %}
     <div class="dashboard-summary">
         <div class="summary-box">
-            <h2>Tickets Opened</h2>
+            <h2>Open</h2>
             <div class="count">{% if open_tickets %}{{ open_tickets|length }}{% else %}0{% endif %}</div>
         </div>
         <div class="summary-box">
-            <h2>Tickets In Progress</h2>
+            <h2>In Progress</h2>
             <div class="count">{% if in_progress_tickets %}{{ in_progress_tickets|length }}{% else %}0{% endif %}</div>
         </div>
         <div class="summary-box">
-            <h2>Tickets On Hold</h2>
+            <h2>On Hold</h2>
             <div class="count">{% if on_hold_tickets %}{{ on_hold_tickets|length }}{% else %}0{% endif %}</div>
         </div>
         <div class="summary-box">
-            <h2>Tickets Resolved</h2>
+            <h2>Resolved</h2>
             <div class="count">{% if resolved_tickets %}{{ resolved_tickets|length }}{% else %}0{% endif %}</div>
         </div>
         <div class="summary-box">
-            <h2>Tickets Closed</h2>
+            <h2>Closed</h2>
             <div class="count">{% if closed_tickets %}{{ closed_tickets|length }}{% else %}0{% endif %}</div>
         </div>
     </div>
@@ -40,7 +40,7 @@
         <table class="ticket-table">
             <thead>
                 <tr>
-                    <th>Request ID</th>
+                    <th>ID</th>
                     <th>Date Opened</th>
                     <th>Request Type</th>
                     <th>Title</th>

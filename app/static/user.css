@@ -22,6 +22,11 @@
     flex-direction: column;
 }
 
+.ticket-history-container p {
+    margin-top: -20px;
+    margin-bottom: 10px;
+}
+
 .ticket-history-header {
     display: flex;
     justify-content: space-between;
