@@ -9,7 +9,7 @@
         <table class="ticket-table">
             <thead>
                 <tr>
-                    <th>Request ID</th>
+                    <th>ID</th>
                     <th>Date Opened</th>
                     <th>Request Type</th>
                     <th>Title</th>
@@ -19,7 +19,11 @@
             <tbody>
                 {% if all_tickets %}
                     {% for ticket in all_tickets %}
-                        <tr>
+                        <tr class="ticket-item"
+                            data-ticket-id="{{ ticket.id }}"
+                            data-request-type="{{ ticket.request_type }}"
+                            data-title="{{ ticket.title }}"
+                            data-description="{{ ticket.description }}">
                             <td>{{ ticket.id }}</td>
                             <td>{{ ticket.date_opened }}</td>
                             <td>{{ ticket.request_type }}</td>
@@ -28,7 +32,7 @@
                         </tr>
                     {% endfor %}
                 {% else %}
-                    <tr><td colspan="4">No ticket history available.</td></tr>
+                    <tr><td colspan="5">No open tickets available.</td></tr>
                 {% endif %}
             </tbody>
         </table>
@@ -79,7 +83,7 @@
         <div class="ticket-details" id="ticketDetails">
             <h2>Ticket Details</h2>
             <p>Date: <span id="ticketDate">-</span></p>
-            <p>Email: <span id="ticketEmail">-</span></p>
+            <p>Email: <span id="ticketEmail">{{ user.email }}</span></p>
             <p>Request Type: <span id="ticketRequestType">-</span></p>
             <p>Title: <span id="ticketTitle">-</span></p>
             <p>Description: <span id="ticketDescription">-</span></p>
@@ -106,13 +110,13 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const ticketList = document.getElementById("ticketList");
             const updateTicketForm = document.getElementById("updateTicketForm");
             const submitEditDetailsButton = document.getElementById("submitEditDetails");
             const ticketDetailsSection = document.getElementById("ticketDetails");
             const editDetailsButton = document.getElementById("editDetails");
             const updateTicketFinalButton = document.getElementById("updateTicketFinal");
-            const requestTypeEdit = document.getElementById("request_type_edit");
+            const finalUpdateRequestForm = updateTicketFinalButton.closest("form");
+            const requestTypeEdit = document.getElementById("request_type");
             const titleEdit = document.getElementById("title_edit");
             const descriptionEdit = document.getElementById("description_edit");
             const finalTicketId = document.getElementById("final_ticket_id");
@@ -129,7 +133,7 @@
             };
             let selectedTicketId = null;
 
-            // Custom alert
+            // Custom alert elements
             const customAlert = document.getElementById("customAlert");
             const alertMessage = document.getElementById("alertMessage");
             const okayButton = document.getElementById("alertOkayButton");
@@ -139,59 +143,45 @@
                 customAlert.style.display = "flex";
             }
 
-            function hideAlert() {
+            function hideAlertAndRedirect() {
                 customAlert.style.display = "none";
+                window.location.href = "{{ url_for('user.dashboard') }}";
             }
 
-            okayButton.addEventListener("click", hideAlert);
+            okayButton.addEventListener("click", hideAlertAndRedirect);
 
-            // Ticket selection and edit form
+            // Ticket selection and edit form logic
             ticketItems.forEach(item => {
                 item.addEventListener("click", function() {
-                    // Remove selection from other items
-                    ticketItems.forEach(otherItem => {
-                        otherItem.classList.remove("selected-ticket");
-                    });
-                    // Add selection to the clicked item
+                    ticketItems.forEach(otherItem => otherItem.classList.remove("selected-ticket"));
                     this.classList.add("selected-ticket");
                     selectedTicketId = this.dataset.ticketId;
                     requestTypeEdit.value = this.dataset.requestType;
                     titleEdit.value = this.dataset.title;
                     descriptionEdit.value = this.dataset.description;
-
-                    // Enable the submit changes button
                     submitEditDetailsButton.disabled = false;
                 });
             });
 
             submitEditDetailsButton.addEventListener("click", function(event) {
                 event.preventDefault();
-
                 if (selectedTicketId) {
                     const requestType = requestTypeEdit.value;
                     const title = titleEdit.value;
                     const description = descriptionEdit.value;
 
-                    // Update ticket details display
-                    ticketDetailSpans.date.textContent = new Date().toLocaleDateString();
-                    ticketDetailSpans.email.textContent = "[User Email]";
                     ticketDetailSpans.requestType.textContent = requestType;
                     ticketDetailSpans.title.textContent = title;
                     ticketDetailSpans.description.textContent = description;
 
-                    // Update hidden form fields for final submission
-                    finalTicketId.value = selectedTicketId;
                     finalRequestType.value = requestType;
                     finalTitle.value = title;
                     finalDescription.value = description;
 
-                    // Disable the edit form
                     requestTypeEdit.disabled = true;
                     titleEdit.disabled = true;
                     descriptionEdit.disabled = true;
                     submitEditDetailsButton.disabled = true;
-
-                    // Enable the confirm update buttons
                     editDetailsButton.disabled = false;
                     updateTicketFinalButton.disabled = false;
                 } else {
@@ -200,16 +190,20 @@
             });
 
             editDetailsButton.addEventListener("click", function() {
-                // Re-enable the edit form
                 requestTypeEdit.disabled = false;
                 titleEdit.disabled = false;
                 descriptionEdit.disabled = false;
                 submitEditDetailsButton.disabled = false;
-
-                // Disable the confirm update buttons
                 editDetailsButton.disabled = true;
                 updateTicketFinalButton.disabled = true;
             });
+
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            if (flashes.length > 0) {
+                flashes.forEach(function(flash) {
+                    showAlert(flash[1]);
+                });
+            }
         });
     </script>
 {% endblock %}

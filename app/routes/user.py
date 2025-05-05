@@ -78,6 +78,7 @@ def create_ticket():
 
 @bp.route("/update-ticket", methods=["GET", "POST"])
 def update_ticket():
+    from app import db
     from app.models import Ticket, User
 
     form = TicketForm()
@@ -89,7 +90,18 @@ def update_ticket():
     all_tickets = Ticket.query.filter_by(creator=user.id, status="Open").all()
 
     if form.validate_on_submit():
-        return redirect(url_for("user.dashboard"))
+        # Retrieve ticket from the database
+        ticket_id = request.form.get("ticket_id")
+        ticket = Ticket.query.get_or_404(ticket_id)
+
+        # Update ticket details
+        ticket.request_type = form.request_type.data
+        ticket.title = form.title.data
+        ticket.description = form.description.data
+
+        # Save changes to database
+        db.session.commit()
+        flash("Ticket updated successfully!", "success")
 
     return render_template(
         "user/update_ticket.html", form=form, user=user, all_tickets=all_tickets
