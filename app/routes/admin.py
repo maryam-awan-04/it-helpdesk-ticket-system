@@ -2,10 +2,11 @@
 Admin routes for the application
 """
 
-from flask import Blueprint, redirect, render_template, session, url_for
+from flask import (Blueprint, flash, redirect, render_template, request,
+                   session, url_for)
 
-from app.forms.registration import RegistrationForm
 from app.forms.ticket import TicketForm
+from app.forms.user import UserForm
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -58,14 +59,44 @@ def manage_tickets():
 
 @bp.route("/manage-users", methods=["GET", "POST"])
 def manage_users():
+    from app import db
     from app.models import User
-
-    form = RegistrationForm()
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
 
-    if form.validate_on_submit():
-        return redirect(url_for("admin.dashboard"))
+    # Retrieve all users
+    all_users = User.query.all()
 
-    return render_template("admin/manage_users.html", form=form, user=user)
+    if "delete_user" in request.form:
+        # Retrieve user from the database
+        user_id = request.form.get("delete_user_id")
+        delete_user = User.query.get(user_id)
+
+        # Delete user from the database
+        db.session.delete(delete_user)
+        db.session.commit()
+
+        flash("User deleted successfully.", "success")
+        return redirect(url_for("admin.manage_users"))
+
+    form = UserForm()
+
+    if form.validate_on_submit():
+        # Retrieve user from the database
+        user_id = form.id.data
+        update_user = User.query.get(user_id)
+
+        # Update user details
+        update_user.firstname = form.firstname.data
+        update_user.surname = form.surname.data
+        update_user.email = form.email.data
+        update_user.role = form.role.data
+
+        db.session.commit()
+
+        flash("User details updated successfully.", "success")
+
+    return render_template(
+        "admin/manage_users.html", form=form, user=user, all_users=all_users
+    )

@@ -320,7 +320,8 @@ select#role.form-control:focus {
 
 .edit-button,
 .create-update-ticket-button,
-.update-user-button {
+.update-user-button,
+.cancel-button {
     background-color: #ddd;
     color: #777;
     padding: 10px 20px;
@@ -329,7 +330,7 @@ select#role.form-control:focus {
     font-size: 16px;
     transition: background-color 0.3s ease;
     margin-right: 10px;
-    cursor: default;
+    cursor: pointer;
     margin-top: 10px;
 }
 
