@@ -4,6 +4,88 @@
     <div class="ticket-history-container">
         <div class="ticket-history-header">
             <h2>Ticket History</h2>
+            <div class="filter-options">
+                <div class="custom-dropdown">
+                    <label for="status-filter-toggle">Filter by Status:</label>
+                    <div class="dropdown-toggle" id="status-filter-toggle" onclick="toggleDropdown('status-dropdown')">
+                        <span>All</span>
+                    </div>
+                    <div class="dropdown-content" id="status-dropdown">
+                        <label>
+                            <input type="radio" name="status" value="" onchange="updateSelected(this, 'status-filter-toggle')">
+                            All
+                        </label>
+                        {% for status in status_options %}
+                        <label>
+                            <input type="radio" name="status" value="{{ status }}" onchange="updateSelected(this, 'status-filter-toggle')">
+                            {{ status }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="custom-dropdown">
+                    <label for="request-type-filter-toggle">Filter by Request Type:</label>
+                    <div class="dropdown-toggle" id="request-type-filter-toggle" onclick="toggleDropdown('request-type-dropdown')">
+                        <span>All</span>
+                    </div>
+                    <div class="dropdown-content" id="request-type-dropdown">
+                        <label>
+                            <input type="radio" name="request_type" value="" onchange="updateSelected(this, 'request-type-filter-toggle')">
+                            All
+                        </label>
+                        {% for request_type in request_type_options %}
+                        <label>
+                            <input type="radio" name="request_type" value="{{ request_type }}" onchange="updateSelected(this, 'request-type-filter-toggle')">
+                            {{ request_type }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="custom-dropdown">
+                    <label for="assigned-filter-toggle">Filter by Assigned To:</label>
+                    <div class="dropdown-toggle" id="assigned-filter-toggle" onclick="toggleDropdown('assigned-dropdown')">
+                        <span>All</span>
+                    </div>
+                    <div class="dropdown-content" id="assigned-dropdown">
+                        <label>
+                            <input type="radio" name="assigned_to" value="" onchange="updateSelected(this, 'assigned-filter-toggle')">
+                            All
+                        </label>
+                        {% for admin in all_admins %}
+                        <label>
+                            <input type="radio" name="assigned_to" value="{{ admin[0] }}" onchange="updateSelected(this, 'assigned-filter-toggle')">
+                            {{ admin[1] }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="custom-dropdown">
+                    <label for="creator-filter-toggle">Filter by Created By:</label>
+                    <div class="dropdown-toggle" id="creator-filter-toggle" onclick="toggleDropdown('creator-dropdown')">
+                        <span>All</span>
+                    </div>
+                    <div class="dropdown-content" id="creator-dropdown">
+                        <label>
+                            <input type="radio" name="creator_user" value="" onchange="updateSelected(this, 'creator-filter-toggle')">
+                            All
+                        </label>
+                        {% for creator in all_creators %}
+                        <label>
+                            <input type="radio" name="creator_user" value="{{ creator[0] }}" onchange="updateSelected(this, 'creator-filter-toggle')">
+                            {{ creator[1] }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    <button onclick="applyFilters()">Apply Filters</button>
+                    <button onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
         </div>
         <table class="ticket-table">
             <thead>
@@ -239,6 +321,89 @@
                 editPopup.style.display = "block";
             });
         {% endif %}
+
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function applyFilters() {
+            const statusFilterElements = document.querySelectorAll("#status-dropdown input[name='status']:checked");
+            const statusFilter = Array.from(statusFilterElements)
+                                    .map(input => input.value)
+                                    .filter(value => value !== "");
+
+            const typeFilterElements = document.querySelectorAll("#request-type-dropdown input[name='request_type']:checked");
+            const typeFilter = Array.from(typeFilterElements)
+                                  .map(input => input.value)
+                                  .filter(value => value !== "");
+
+            const assignedFilter = document.querySelector("#assigned-dropdown input[name='assigned_to']:checked")?.value;
+            const creatorFilter = document.querySelector("#creator-dropdown input[name='creator_user']:checked")?.value;
+
+            let queryParams = [];
+            if (statusFilter.length > 0) {
+                statusFilter.forEach(status => queryParams.push(`status=${encodeURIComponent(status)}`));
+            }
+            if (typeFilter.length > 0) {
+                typeFilter.forEach(type => queryParams.push(`request_type=${encodeURIComponent(type)}`));
+            }
+            if (assignedFilter) queryParams.push(`assigned_to=${encodeURIComponent(assignedFilter)}`);
+            if (creatorFilter) queryParams.push(`creator_user=${encodeURIComponent(creatorFilter)}`);
+
+            const queryString = queryParams.join("&");
+            window.location.href = `/admin/manage-tickets${queryString ? "?" + queryString : ""}`;
+        }
+
+        function clearFilters() {
+            window.location.href = "/admin/manage-tickets";
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function updateSelected(radio, toggleId) {
+            const toggleButton = document.getElementById(toggleId).querySelector("span");
+            toggleButton.textContent = radio.value || "All " + toggleId.replace("-filter-toggle", "").replace("-dropdown", "").split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+            const dropdownId = toggleId.replace("-filter-toggle", "-dropdown");
+            document.getElementById(dropdownId).style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches(".dropdown-toggle")) {
+                const dropdowns = document.querySelectorAll(".dropdown-content");
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.style.display === "block") {
+                        dropdown.style.display = "none";
+                    }
+                });
+            }
+        }
+
+        function initialiseFilters() {
+            const statusParams = new URLSearchParams(window.location.search).getAll("status");
+            const typeParams = new URLSearchParams(window.location.search).getAll("request_type");
+
+            document.querySelectorAll("#status-dropdown input[name='status']").forEach(radio => {
+                if (statusParams.includes(radio.value)) {
+                    radio.checked = true;
+                }
+            });
+            const selectedStatusesText = statusParams.length > 0 ? statusParams.join(", ") : "All";
+            document.getElementById("status-filter-toggle").querySelector("span").textContent = selectedStatusesText;
+
+            document.querySelectorAll("#request-type-dropdown input[name='request_type']").forEach(radio => {
+                if (typeParams.includes(radio.value)) {
+                    radio.checked = true;
+                }
+            });
+            const selectedTypesText = typeParams.length > 0 ? typeParams.join(", ") : "All";
+            document.getElementById("request-type-filter-toggle").querySelector("span").textContent = selectedTypesText;
+        }
+
+        window.onload = initialiseFilters;
 
     </script>
 {% endblock %}

@@ -12,30 +12,56 @@ from app.forms.user import UserForm
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
+STATUS_OPTIONS = ["Open", "In Progress", "On Hold", "Resolved", "Closed"]
+REQUEST_TYPE_OPTIONS = [
+    "Access Request",
+    "Hardware Issue",
+    "Software Issue",
+    "Network Issue",
+    "Security Incident",
+    "Service Request",
+    "Onboarding Request",
+    "Offboarding Request",
+    "Other",
+]
 
-@bp.route("/dashboard", methods=["GET", "POST"])
+
+@bp.route("/dashboard", methods=["GET"])
 def dashboard():
     from app.models import Ticket, User
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
-
-    # Retrieve all tickets
     all_tickets = Ticket.query.all()
 
-    # Retrieve tickets by status for dashboard summary
-    assigned_tickets = [t for t in all_tickets if t.assigned_to == user.id]
-    in_progress_tickets = [t for t in all_tickets if t.assigned_to == user.id]
+    # Get filters from query parameters
+    status_filter = request.args.getlist("status")
+    type_filter = request.args.getlist("request_type")
+
+    # Apply filters
+    assigned_tickets = [
+        t
+        for t in all_tickets
+        if t.assigned_to == user.id
+        and (not status_filter or t.status in status_filter)
+        and (not type_filter or t.request_type in type_filter)
+    ]
+
     unassigned_tickets = [
-        t for t in all_tickets if t.status == "Open" and t.assigned_to is None
+        t
+        for t in all_tickets
+        if t.status == "Open"
+        and t.assigned_to is None
+        and (not type_filter or t.request_type in type_filter)
     ]
 
     return render_template(
         "admin/dashboard.html",
         user=user,
         assigned_tickets=assigned_tickets,
-        in_progress_tickets=in_progress_tickets,
         unassigned_tickets=unassigned_tickets,
+        status_options=STATUS_OPTIONS,
+        request_type_options=REQUEST_TYPE_OPTIONS,
     )
 
 
@@ -47,8 +73,28 @@ def manage_tickets():
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
 
-    # Retrieve all tickets
+    # Get filters from query parameters
+    status_filter = request.args.getlist("status")
+    type_filter = request.args.getlist("request_type")
+    assigned_to_filter = request.args.get("assigned_to")
+    creator_user_filter = request.args.get("creator_user")
+
+    # Apply filters
     all_tickets = Ticket.query.all()
+    filtered_tickets = [
+        t
+        for t in all_tickets
+        if (not status_filter or t.status in status_filter)
+        and (not type_filter or t.request_type in type_filter)
+        and (
+            not assigned_to_filter
+            or (t.assigned_to and str(t.assigned_to) == assigned_to_filter)
+        )
+        and (
+            not creator_user_filter
+            or (t.creator_user and str(t.creator_user.id) == creator_user_filter)
+        )
+    ]
 
     if "delete_ticket" in request.form:
         # Retrieve ticket from the database
@@ -62,9 +108,16 @@ def manage_tickets():
         flash("Ticket deleted successfully.", "success")
         return redirect(url_for("admin.manage_tickets"))
 
-    # Get admins to assign tickets
     admins = User.query.filter_by(role="Admin").all()
     all_admins = [(admin.id, f"{admin.firstname} {admin.surname}") for admin in admins]
+    creators = User.query.filter(
+        User.id.in_(
+            [t.creator_user.id for t in all_tickets if t.creator_user is not None]
+        )
+    ).all()
+    all_creators = [
+        (creator.id, f"{creator.firstname} {creator.surname}") for creator in creators
+    ]
 
     form = UpdateTicketForm()
     form.assigned_to.choices = [("", "Select an admin")] + all_admins
@@ -94,8 +147,12 @@ def manage_tickets():
         "admin/manage_tickets.html",
         form=form,
         user=user,
-        all_tickets=all_tickets,
+        all_tickets=filtered_tickets,
         show_edit_popup=show_edit_popup,
+        status_options=STATUS_OPTIONS,
+        request_type_options=REQUEST_TYPE_OPTIONS,
+        all_admins=all_admins,
+        all_creators=all_creators,
     )
 
 
