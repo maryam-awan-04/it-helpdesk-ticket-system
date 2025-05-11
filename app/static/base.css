@@ -159,7 +159,9 @@ h2 {
 }
 
 select#role.form-control,
-select#request_type.form-control {
+select#request_type.form-control,
+select#status.form-control,
+select#assigned_to.form-control {
     width: calc(100%);
     padding: 10px;
     border: 1px solid #ddd;
@@ -173,7 +175,9 @@ select#request_type.form-control {
 }
 
 select#request_type.form-control:focus,
-select#role.form-control:focus {
+select#role.form-control:focus,
+select#status.form-control:focus,
+select#assigned_to.form-control:focus {
     outline: none;
     border-color: #99CC00;
 }
@@ -361,4 +365,22 @@ select#role.form-control:focus {
 .create-update-ticket-button:not(:disabled):hover,
 .update-user-button:not(:disabled):hover {
     background-color: #80A300;
+}
+
+.sign-in-button,
+.update-ticket-button {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+.sign-in-button:hover,
+.update-ticket-button:hover {
+    background-color: var(--primary-color-dark);
 }

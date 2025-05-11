@@ -99,19 +99,3 @@ body {
 .alternative_auth:hover {
     text-decoration: underline;
 }
-
-.sign-in-button {
-    background-color: var(--primary-color);
-    color: var(--background-color);
-    padding: 10px 20px;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    font-weight: 600;
-}
-
-.sign-in-button:hover {
-    background-color: var(--primary-color-dark);
-}

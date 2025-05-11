@@ -15,7 +15,9 @@
                     <th>Description</th>
                     <th>Assigned To</th>
                     <th>Status</th>
+                    <th>Created By</th>
                     <th>Feedback Score</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,9 +29,22 @@
                             <td>{{ ticket.request_type }}</td>
                             <td>{{ ticket.title }}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
-                            <td>{{ ticket.assigned_to }}</td>
+                            <td>{{ ticket.assigned_user.firstname }} {{ ticket.assigned_user.surname }}</td>
                             <td>{{ ticket.status }}</td>
+                            <td>{{ ticket.creator_user.firstname }} {{ ticket.creator_user.surname }}</td>
                             <td>{{ ticket.feedback_score }}</td>
+                            <td>
+                                <button type="button" class="edit-button ticket-edit-button"
+                                        data-ticket-id="{{ ticket.id }}"
+                                        data-date-opened="{{ ticket.date_opened }}"
+                                        data-request-type="{{ ticket.request_type }}"
+                                        data-title="{{ ticket.title }}"
+                                        data-description="{{ ticket.description }}"
+                                        data-assigned-to="{{ ticket.assigned_to }}"
+                                        data-status="{{ ticket.status }}"
+                                        data-feedback-score="{{ ticket.feedback_score }}">Edit</button>
+                                <button type="button" class="delete-button ticket-delete-button" data-ticket-id="{{ ticket.id }}">Delete</button>
+                            </td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -39,65 +54,87 @@
         </table>
     </div>
 
-    <div class="edit-form-container">
-        <h2>Edit Ticket Details</h2>
-        <form method="POST" id="updateTicketForm">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.request_type.label }}
-                {{ form.request_type(class="form-control", id="request_type", readonly=true) }}
-                {% if form.request_type.errors %}
-                    <ul class="errors">
-                    {% for error in form.request_type.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.title.label }}
-                {{ form.title(class="form-control", id="title_edit") }}
-                {% if form.title.errors %}
-                    <ul class="errors">
-                    {% for error in form.title.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.description.label }}
-                {{ form.description(class="form-control", rows="5", id="description_edit") }}
-                {% if form.description.errors %}
-                    <ul class="errors">
-                    {% for error in form.description.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <button type="button" class="submit-button" id="submitEditDetails">Submit Changes</button>
-        </form>
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-button">&times;</span>
+            <h2>Edit Ticket Details</h2>
+            <form method="POST" id="editTicketForm">
+                {{ form.hidden_tag() }}
+                <input type="hidden" id="ticket_id" name="id">
+                <div class="form-group">
+                    {{ form.request_type.label }}
+                    {{ form.request_type(class="form-control", id="request_type") }}
+                    {% if form.request_type.errors %}
+                        <ul class="errors">
+                        {% for error in form.request_type.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control", id="title") }}
+                    {% if form.title.errors %}
+                        <ul class="errors">
+                        {% for error in form.title.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control", rows="5", id="description") }}
+                    {% if form.description.errors %}
+                        <ul class="errors">
+                        {% for error in form.description.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.status.label }}
+                    {{ form.status(class="form-control", id="status") }}
+                    {% if form.status.errors %}
+                        <ul class="errors">
+                        {% for error in form.status.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.assigned_to.label }}
+                    {{ form.assigned_to(class="form-control", id="assigned_to") }}
+                    {% if form.assigned_to.errors %}
+                        <ul class="errors">
+                        {% for error in form.assigned_to.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-options">
+                    {{ form.submit(class="btn update-ticket-button", value="Update Ticket") }}
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="details-container">
-        <div class="ticket-details" id="ticketDetails">
-            <h2>Ticket Details</h2>
-            <p>Date: <span id="ticketDate">-</span></p>
-            <p>Email: <span id="ticketEmail">-</span></p>
-            <p>Request Type: <span id="ticketRequestType">-</span></p>
-            <p>Title: <span id="ticketTitle">-</span></p>
-            <p>Description: <span id="ticketDescription">-</span></p>
+    <div id="deleteConfirmationPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-button" id="closeDeletePopup">&times;</span>
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this ticket?</p>
             <div class="button-container">
-                <button type="button" class="edit-button" id="editDetails" disabled>Edit Details</button>
-                <form method="POST">
+                <form method="POST" id="deleteTicketForm">
                     {{ form.hidden_tag() }}
-                    <input type="hidden" id="final_ticket_id" name="ticket_id">
-                    <input type="hidden" id="final_request_type" name="request_type">
-                    <input type="hidden" id="final_title" name="title">
-                    <input type="hidden" id="final_description" name="description">
-                    <button type="submit" class="create-update-ticket-button" id="updateTicketFinal" disabled name="update_ticket">Update Ticket</button>
+                    <input type="hidden" id="delete_ticket_id" name="delete_ticket_id">
+                    <button type="submit" class="delete-button" name="delete_ticket">Delete</button>
                 </form>
+                <button type="submit" class="cancel-button" id="cancelDelete">Cancel</button>
             </div>
         </div>
     </div>
@@ -111,28 +148,21 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const ticketList = document.getElementById("ticketList");
-            const updateTicketForm = document.getElementById("updateTicketForm");
-            const submitEditDetailsButton = document.getElementById("submitEditDetails");
-            const ticketDetailsSection = document.getElementById("ticketDetails");
-            const editDetailsButton = document.getElementById("editDetails");
-            const updateTicketFinalButton = document.getElementById("updateTicketFinal");
-            const requestTypeEdit = document.getElementById("request_type_edit");
-            const titleEdit = document.getElementById("title_edit");
-            const descriptionEdit = document.getElementById("description_edit");
-            const finalTicketId = document.getElementById("final_ticket_id");
-            const finalRequestType = document.getElementById("final_request_type");
-            const finalTitle = document.getElementById("final_title");
-            const finalDescription = document.getElementById("final_description");
-            const ticketItems = document.querySelectorAll(".ticket-item");
-            const ticketDetailSpans = {
-                date: document.getElementById("ticketDate"),
-                email: document.getElementById("ticketEmail"),
-                requestType: document.getElementById("ticketRequestType"),
-                title: document.getElementById("ticketTitle"),
-                description: document.getElementById("ticketDescription")
-            };
-            let selectedTicketId = null;
+            const editPopup = document.getElementById("editPopup");
+            const deleteConfirmationPopup = document.getElementById("deleteConfirmationPopup");
+            const closeEditPopupButton = editPopup.querySelector(".close-button");
+            const closeDeletePopupButton = document.getElementById("closeDeletePopup");
+            const cancelDeleteButton = document.getElementById("cancelDelete");
+            const editTicketForm = document.getElementById("editTicketForm");
+            const editTicketIdInput = document.getElementById("ticket_id");
+            const editRequestTypeInput = document.getElementById("request_type");
+            const editTitleInput = document.getElementById("title");
+            const editDescriptionInput = document.getElementById("description");
+            const editStatusInput = document.getElementById("status");
+            const editAssignedToInput = document.getElementById("assigned_to");
+            const deleteTicketIdInput = document.getElementById("delete_ticket_id");
+            const ticketEditButtons = document.querySelectorAll(".ticket-edit-button");
+            const ticketDeleteButtons = document.querySelectorAll(".ticket-delete-button");
 
             // Custom alert
             const customAlert = document.getElementById("customAlert");
@@ -150,71 +180,65 @@
 
             okayButton.addEventListener("click", hideAlert);
 
-            // Ticket selection and edit form
-            ticketItems.forEach(item => {
-                item.addEventListener("click", function() {
-                    // Remove selection from other items
-                    ticketItems.forEach(otherItem => {
-                        otherItem.classList.remove("selected-ticket");
-                    });
-                    // Add selection to the clicked item
-                    this.classList.add("selected-ticket");
-                    selectedTicketId = this.dataset.ticketId;
-                    requestTypeEdit.value = this.dataset.requestType;
-                    titleEdit.value = this.dataset.title;
-                    descriptionEdit.value = this.dataset.description;
+            // Edit popup functionality
+            ticketEditButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    const ticketId = this.dataset.ticketId;
+                    const request_type = this.dataset.requestType;
+                    const title = this.dataset.title;
+                    const description = this.dataset.description;
+                    const assigned_to = this.dataset.assignedTo;
+                    const status = this.dataset.status;
 
-                    // Enable the submit changes button
-                    submitEditDetailsButton.disabled = false;
+                    editTicketIdInput.value = ticketId;
+                    editRequestTypeInput.value = request_type;
+                    editTitleInput.value = title;
+                    editDescriptionInput.value = description;
+                    editAssignedToInput.value = assigned_to;
+                    editStatusInput.value = status;
+
+                    editPopup.style.display = "block";
                 });
             });
 
-            submitEditDetailsButton.addEventListener("click", function(event) {
-                event.preventDefault();
+            closeEditPopupButton.addEventListener("click", function() {
+                editPopup.style.display = "none";
+            });
 
-                if (selectedTicketId) {
-                    const requestType = requestTypeEdit.value;
-                    const title = titleEdit.value;
-                    const description = descriptionEdit.value;
+            // Delete confirmation functionality
+            ticketDeleteButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    const ticketId = this.dataset.ticketId;
+                    deleteTicketIdInput.value = ticketId;
+                    deleteConfirmationPopup.style.display = "block";
+                });
+            });
 
-                    // Update ticket details display
-                    ticketDetailSpans.date.textContent = new Date().toLocaleDateString();
-                    ticketDetailSpans.email.textContent = "[User Email]";
-                    ticketDetailSpans.requestType.textContent = requestType;
-                    ticketDetailSpans.title.textContent = title;
-                    ticketDetailSpans.description.textContent = description;
+            closeDeletePopupButton.addEventListener("click", function() {
+                deleteConfirmationPopup.style.display = "none";
+            });
 
-                    // Update hidden form fields for final submission
-                    finalTicketId.value = selectedTicketId;
-                    finalRequestType.value = requestType;
-                    finalTitle.value = title;
-                    finalDescription.value = description;
+            cancelDeleteButton.addEventListener("click", function() {
+                deleteConfirmationPopup.style.display = "none";
+            });
 
-                    // Disable the edit form
-                    requestTypeEdit.disabled = true;
-                    titleEdit.disabled = true;
-                    descriptionEdit.disabled = true;
-                    submitEditDetailsButton.disabled = true;
-
-                    // Enable the confirm update buttons
-                    editDetailsButton.disabled = false;
-                    updateTicketFinalButton.disabled = false;
-                } else {
-                    showAlert("Please select a ticket to update.");
+            // Close popup when clicking outside
+            window.addEventListener("click", function(event) {
+                if (event.target == editPopup) {
+                    editPopup.style.display = "none";
+                }
+                if (event.target == deleteConfirmationPopup) {
+                    deleteConfirmationPopup.style.display = "none";
                 }
             });
-
-            editDetailsButton.addEventListener("click", function() {
-                // Re-enable the edit form
-                requestTypeEdit.disabled = false;
-                titleEdit.disabled = false;
-                descriptionEdit.disabled = false;
-                submitEditDetailsButton.disabled = false;
-
-                // Disable the confirm update buttons
-                editDetailsButton.disabled = true;
-                updateTicketFinalButton.disabled = true;
-            });
         });
+
+        {% if show_edit_popup %}
+            window.addEventListener("DOMContentLoaded", function() {
+                const editPopup = document.getElementById("editPopup");
+                editPopup.style.display = "block";
+            });
+        {% endif %}
+
     </script>
 {% endblock %}

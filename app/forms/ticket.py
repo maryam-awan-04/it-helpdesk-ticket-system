@@ -7,7 +7,7 @@ from wtforms import SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 
 
-class TicketForm(FlaskForm):
+class CreateTicketForm(FlaskForm):
     """
     Form for ticket creation or update
     """
@@ -46,3 +46,54 @@ class TicketForm(FlaskForm):
         """
         if not self.title.data or not self.description.data:
             raise ValidationError("Title and description cannot be empty.")
+
+
+class UpdateTicketForm(FlaskForm):
+    """
+    Form for ticket update
+    """
+
+    id = StringField("Ticket ID", validators=[DataRequired()])
+    request_type = SelectField(
+        "Request Type",
+        choices=[
+            ("Select"),
+            ("Access Request"),
+            ("Hardware Issue"),
+            ("Software Issue"),
+            ("Network Issue"),
+            ("Security Incident"),
+            ("Service Request"),
+            ("Onboarding Request"),
+            ("Offboarding Request"),
+            ("Other"),
+        ],
+        validators=[DataRequired()],
+    )
+    title = StringField("Title", validators=[DataRequired()])
+    description = StringField("Description", validators=[DataRequired()])
+    status = SelectField(
+        "Status",
+        choices=[
+            ("Select"),
+            ("Open"),
+            ("In Progress"),
+            ("On Hold"),
+            ("Resolved"),
+            ("Closed"),
+        ],
+        validators=[DataRequired()],
+    )
+    assigned_to = SelectField(
+        "Assigned To", choices=[("", "Select an admin")], coerce=str
+    )
+    submit = SubmitField("Update Ticket")
+
+    def validate_assigned_to(self, field):
+        """
+        Validate that the assigned to field is compulsory if status is not "Open"
+        """
+        if self.status.data != "Open" and not field.data:
+            raise ValidationError(
+                "Assigned to field is required when status is not 'Open'."
+            )

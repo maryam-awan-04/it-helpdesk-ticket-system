@@ -4,11 +4,10 @@ User routes for the application
 
 from datetime import datetime
 
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   session, url_for)
+from flask import Blueprint, flash, jsonify, render_template, request, session
 
 from app.forms.feedback import FeedbackForm
-from app.forms.ticket import TicketForm
+from app.forms.ticket import CreateTicketForm
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -50,7 +49,7 @@ def create_ticket():
     from app import db
     from app.models import Ticket, User
 
-    form = TicketForm()
+    form = CreateTicketForm()
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
@@ -81,7 +80,7 @@ def update_ticket():
     from app import db
     from app.models import Ticket, User
 
-    form = TicketForm()
+    form = CreateTicketForm()
 
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
@@ -106,9 +105,6 @@ def update_ticket():
     return render_template(
         "user/update_ticket.html", form=form, user=user, all_tickets=all_tickets
     )
-
-
-from flask import jsonify
 
 
 @bp.route("/submit-feedback", methods=["GET", "POST"])

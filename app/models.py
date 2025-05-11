@@ -25,3 +25,6 @@ class Ticket(db.Model):
     feedback = db.Column(db.Text, nullable=True)
     assigned_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     creator = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+
+    assigned_user = db.relationship("User", foreign_keys=[assigned_to])
+    creator_user = db.relationship("User", foreign_keys=[creator])
