@@ -24,6 +24,7 @@ REQUEST_TYPE_OPTIONS = [
     "Offboarding Request",
     "Other",
 ]
+ROLE_OPTIONS = ["User", "Admin"]
 
 
 @bp.route("/dashboard", methods=["GET"])
@@ -164,8 +165,13 @@ def manage_users():
     user_email = session.get("user_email")
     user = User.query.filter_by(email=user_email).first()
 
-    # Retrieve all users
+    role_filter = request.args.get("role")
+
+    # Retrieve all users and apply filters
     all_users = User.query.all()
+    filtered_users = [
+        u for u in all_users if (not role_filter or u.role == role_filter)
+    ]
 
     if "delete_user" in request.form:
         # Retrieve user from the database
@@ -197,5 +203,9 @@ def manage_users():
         flash("User details updated successfully.", "success")
 
     return render_template(
-        "admin/manage_users.html", form=form, user=user, all_users=all_users
+        "admin/manage_users.html",
+        form=form,
+        user=user,
+        all_users=filtered_users,
+        role_options=ROLE_OPTIONS,
     )

@@ -376,7 +376,8 @@ select#assigned_to.form-control:focus {
     box-sizing: border-box;
 }
 
-.filter-options button {
+.filter-options button,
+.user-list-header .filter-options .search-container button#search-button {
     padding: 8px 12px;
     background-color: #f0f0f0;
     color: #333;
@@ -387,7 +388,8 @@ select#assigned_to.form-control:focus {
     margin-top: 27px
 }
 
-.filter-options button:hover {
+.filter-options button:hover,
+.user-list-header .filter-options .search-container button#search-button:hover {
     background-color: #e0e0e0;
 }
 

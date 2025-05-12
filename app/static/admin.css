@@ -130,3 +130,24 @@
 .logout-button:hover {
     background-color: #A32600;
 }
+
+.user-list-header .filter-options .search-container {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.user-list-header .filter-options .search-container input[type="text"]#search-input {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.user-list-header .filter-options .search-container input[type="text"]#search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}

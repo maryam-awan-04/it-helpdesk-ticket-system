@@ -4,6 +4,34 @@
     <div class="user-list-container">
         <div class="user-list-header">
             <h2>User Information</h2>
+            <div class="filter-options">
+                <div class="custom-dropdown">
+                    <label for="role-filter-toggle">Filter by Role:</label>
+                    <div class="dropdown-toggle" id="role-filter-toggle" onclick="toggleDropdown('role-dropdown')">
+                        <span>All</span>
+                    </div>
+                    <div class="dropdown-content" id="role-dropdown">
+                        <label>
+                            <input type="radio" name="role" value="" onchange="updateSelected(this, 'role-filter-toggle')">
+                            All
+                        </label>
+                        {% for role in role_options %}
+                        <label>
+                            <input type="radio" name="role" value="{{ role }}" onchange="updateSelected(this, 'role-filter-toggle')">
+                            {{ role }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <button onclick="applyFilters()">Apply Filters</button>
+                    <button onclick="clearFilters()">Clear Filters</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search">
+                    <button type="button" id="search-button">Search</button>
+                </div>
+            </div>
         </div>
         <table class="user-table">
             <thead>
@@ -21,8 +49,8 @@
                     {% for user in all_users %}
                         <tr>
                             <td>{{ user.id }}</td>
-                            <td>{{ user.firstname }}</td>
-                            <td>{{ user.surname }}</td>
+                            <td class="firstname">{{ user.firstname }}</td>
+                            <td class="surname">{{ user.surname }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.role }}</td>
                             <td>
@@ -199,6 +227,84 @@
                 }
                 if (event.target == deleteConfirmationPopup) {
                     deleteConfirmationPopup.style.display = "none";
+                }
+            });
+        });
+
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function applyFilters() {
+            const roleFilterElements = document.querySelectorAll("#role-dropdown input[name='role']:checked");
+            const roleFilter = Array.from(roleFilterElements)
+                                    .map(input => input.value)
+                                    .filter(value => value !== "");
+
+            let queryParams = [];
+            if (roleFilter.length > 0) {
+                roleFilter.forEach(role => queryParams.push(`role=${encodeURIComponent(role)}`));
+            }
+
+            const queryString = queryParams.join("&");
+            window.location.href = `/admin/manage-users${queryString ? "?" + queryString : ""}`;
+        }
+
+        function clearFilters() {
+            window.location.href = "/admin/manage-users";
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function updateSelected(radio, toggleId) {
+            const toggleButton = document.getElementById(toggleId).querySelector("span");
+            toggleButton.textContent = radio.value || "All " + toggleId.replace("-filter-toggle", "").replace("-dropdown", "").split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+            const dropdownId = toggleId.replace("-filter-toggle", "-dropdown");
+            document.getElementById(dropdownId).style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches(".dropdown-toggle")) {
+                const dropdowns = document.querySelectorAll(".dropdown-content");
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.style.display === "block") {
+                        dropdown.style.display = "none";
+                    }
+                });
+            }
+        }
+
+        function initialiseFilters() {
+            const roleParams = new URLSearchParams(window.location.search).getAll("role");
+
+            document.querySelectorAll("#role-dropdown input[name='role']").forEach(radio => {
+                if (roleParams.includes(radio.value)) {
+                    radio.checked = true;
+                }
+            });
+            const selectedRolesText = roleParams.length > 0 ? roleParams.join(", ") : "All";
+            document.getElementById("role-filter-toggle").querySelector("span").textContent = selectedRolesText;
+        }
+
+        window.onload = initialiseFilters;
+
+        const searchInput = document.getElementById("search-input");
+        const searchButton = document.getElementById("search-button");
+        const userTableRows = document.querySelectorAll(".user-table tbody tr");
+
+        searchButton.addEventListener("click", function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            userTableRows.forEach(row => {
+                const firstName = row.querySelector(".firstname").textContent.toLowerCase();
+                const surname = row.querySelector(".surname").textContent.toLowerCase();
+                if (firstName.includes(searchTerm) || surname.includes(searchTerm)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
                 }
             });
         });
