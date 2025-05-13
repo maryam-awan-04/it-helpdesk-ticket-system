@@ -47,7 +47,7 @@
                     <th>Description</th>
                     <th>Assigned To</th>
                     <th>Status</th>
-                    <th>Feedback Score</th>
+                    <th>Feedback</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,9 +59,23 @@
                             <td>{{ ticket.request_type }}</td>
                             <td>{{ ticket.title }}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
-                            <td>{{ ticket.assigned_to }}</td>
+                            <td>{{ ticket.assigned_user.firstname }} {{ ticket.assigned_user.surname }}</td>
                             <td>{{ ticket.status }}</td>
-                            <td>{{ ticket.feedback_score }}</td>
+                            <td>{% if ticket.status == 'Resolved' %}
+                                <button class="feedback-button" onclick="openFeedback({{ ticket.id }})">Give Feedback</button>
+                                {% elif ticket.feedback %}
+                                <div class="star-display">
+                                    {% for i in range(ticket.feedback|int) %}
+                                        <span class="star">&#9733;</span>
+                                    {% endfor %}
+                                    {% for i in range(5 - (ticket.feedback|int)) %}
+                                        <span class="empty-star">&#9734;</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -72,19 +86,25 @@
     </div>
 
     <div>
-        <form id="feedbackForm" method="POST">
+        <form id="feedbackForm" method="POST" action="{{ url_for('user.submit_feedback') }}">
             {{ feedback_form.hidden_tag() }}
-            <input type="hidden" name="ticket_id" id="feedback-ticket-id">
+            <input type="hidden" name="id" id="feedback-ticket-id">
 
             <div id="feedback-popup" class="popup-overlay hidden">
               <div class="popup-content">
                 <h2>Rate This Ticket</h2>
 
                 <div class="star-rating">
-                  {% for value, label in feedback_form.rating.choices %}
-                  <input type="radio" id="star{{ value }}" name="{{ feedback_form.rating.name }}" value="{{ value }}">
-                  <label for="star{{ value }}">&#9733;</label>
-                  {% endfor %}
+                    <input type="radio" id="star5" name="{{ feedback_form.rating.name }}" value="5">
+                    <label for="star5">&#9733;</label>
+                    <input type="radio" id="star4" name="{{ feedback_form.rating.name }}" value="4">
+                    <label for="star4">&#9733;</label>
+                    <input type="radio" id="star3" name="{{ feedback_form.rating.name }}" value="3">
+                    <label for="star3">&#9733;</label>
+                    <input type="radio" id="star2" name="{{ feedback_form.rating.name }}" value="2">
+                    <label for="star2">&#9733;</label>
+                    <input type="radio" id="star1" name="{{ feedback_form.rating.name }}" value="1">
+                    <label for="star1">&#9733;</label>
                 </div>
 
                 <div id="feedback-error" class="errors"></div>
@@ -96,32 +116,22 @@
     </div>
 
     <script>
+        const feedbackPopup = document.getElementById("feedback-popup");
+        const feedbackTicketIdInput = document.getElementById("feedback-ticket-id");
+
         function openFeedback(ticketId) {
-            document.getElementById("feedback-ticket-id").value = ticketId;
-            document.getElementById("feedback-popup").classList.remove("hidden");
+            feedbackTicketIdInput.value = ticketId;
+            feedbackPopup.classList.remove("hidden");
         }
 
-        document.getElementById("feedbackForm").addEventListener("submit", function (e) {
-        e.preventDefault();
+        function closeFeedback() {
+            feedbackPopup.classList.add("hidden");
+        }
 
-        const formData = new FormData(this);
-
-        fetch("/user.submit-feedback", {
-            method: "POST",
-            body: formData
-        }).then(res => res.json())
-            .then(data => {
-            if (data.success) {
+        window.addEventListener("click", (event) => {
+            if (event.target == feedbackPopup) {
                 closeFeedback();
-                alert(data.message);
-                location.reload();
-            } else {
-                document.getElementById("feedback-error").textContent = data.errors?.rating?.[0] || "Something went wrong.";
             }
-            }).catch(() => {
-            document.getElementById("feedback-error").textContent = "Network error.";
-            });
         });
-
     </script>
 {% endblock %}

@@ -4,7 +4,7 @@ User routes for the application
 
 from datetime import datetime
 
-from flask import Blueprint, flash, jsonify, render_template, request, session
+from flask import Blueprint, flash, render_template, request, session
 
 from app.forms.feedback import FeedbackForm
 from app.forms.ticket import CreateTicketForm
@@ -107,22 +107,39 @@ def update_ticket():
     )
 
 
-@bp.route("/submit-feedback", methods=["GET", "POST"])
+@bp.route("/submit-feedback", methods=["POST"])
 def submit_feedback():
+    from app import db
+    from app.models import Ticket, User
 
     form = FeedbackForm()
 
+    user_email = session.get("user_email")
+    user = User.query.filter_by(email=user_email).first()
+
+    # Retrieve tickets for the user
+    all_tickets = Ticket.query.filter_by(creator=user.id).all()
+
     if form.validate_on_submit():
-        ticket_id = request.form.get("ticket_id")
+        ticket_id = form.id.data
+        rating = form.rating.data
 
-        # retrieve the ticket from db
-        ticket = ticket_id
+        # Retrieve the ticket from the database
+        ticket = Ticket.query.get(ticket_id)
 
-        if not ticket:
-            return jsonify({"success": False, "error": "Ticket not found"}), 404
-
-        # save feedback to db
-
-        return jsonify({"success": True, "message": "Thank you for your feedback!"})
+        if ticket:
+            # Save feedback to the database
+            ticket.feedback = rating
+            ticket.status = "Closed"
+            db.session.commit()
+            flash("Thank you for your feedback!", "success")
+        else:
+            flash("Error submitting feedback. Ticket not found.", "danger")
     else:
-        return jsonify({"success": False, "errors": form.errors}), 400
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Error in {getattr(form, field).label.text}: {error}", "danger")
+
+    return render_template(
+        "user/dashboard.html", user=user, feedback_form=form, all_tickets=all_tickets
+    )

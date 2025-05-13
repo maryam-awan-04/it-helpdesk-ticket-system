@@ -233,7 +233,8 @@ select#assigned_to.form-control:focus {
     color: #333;
 }
 
-.submit-button {
+.submit-button,
+.feedback-button {
     background-color: #99CC00;
     color: #ffffff;
     padding: 10px 20px;
@@ -244,7 +245,8 @@ select#assigned_to.form-control:focus {
     transition: background-color 0.3s ease;
 }
 
-.submit-button:hover {
+.submit-button:hover,
+.feedback-button:hover {
     background-color: #80A300;
 }
 

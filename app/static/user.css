@@ -134,3 +134,17 @@
 .hidden {
     display: none;
 }
+
+.star-display {
+    display: inline-block;
+}
+
+.star {
+    color: gold;
+    font-size: 12px;
+}
+
+.empty-star {
+    color: lightgray;
+    font-size: 12px;
+}
