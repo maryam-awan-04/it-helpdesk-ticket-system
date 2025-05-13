@@ -221,13 +221,6 @@
         </div>
     </div>
 
-    <div id="customAlert" class="custom-alert">
-        <div class="alert-content">
-            <p id="alertMessage"></p>
-            <button id="alertOkayButton">Okay</button>
-        </div>
-    </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const editPopup = document.getElementById("editPopup");
@@ -246,21 +239,13 @@
             const ticketEditButtons = document.querySelectorAll(".ticket-edit-button");
             const ticketDeleteButtons = document.querySelectorAll(".ticket-delete-button");
 
-            // Custom alert
-            const customAlert = document.getElementById("customAlert");
-            const alertMessage = document.getElementById("alertMessage");
-            const okayButton = document.getElementById("alertOkayButton");
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
 
-            function showAlert(message) {
-                alertMessage.textContent = message;
-                customAlert.style.display = "flex";
+            if (flashes.length > 0) {
+                flashes.forEach(function(flash) {
+                    alert(flash[1]);
+                });
             }
-
-            function hideAlert() {
-                customAlert.style.display = "none";
-            }
-
-            okayButton.addEventListener("click", hideAlert);
 
             // Edit popup functionality
             ticketEditButtons.forEach(button => {

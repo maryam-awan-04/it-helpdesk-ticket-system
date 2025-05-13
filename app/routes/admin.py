@@ -1,5 +1,5 @@
 """
-Admin routes for the application
+Admin routes for the application.
 """
 
 from datetime import datetime
@@ -30,6 +30,9 @@ ROLE_OPTIONS = ["User", "Admin"]
 @bp.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
+    """
+    Admin dashboard displaying assigned and unassigned tickets.
+    """
     from app.models import Ticket
 
     all_tickets = Ticket.query.all()
@@ -38,7 +41,7 @@ def dashboard():
     status_filter = request.args.getlist("status")
     type_filter = request.args.getlist("request_type")
 
-    # Get tickets assigned to current user
+    # Filter tickets assigned to the current user
     assigned_tickets = [
         t
         for t in all_tickets
@@ -47,7 +50,7 @@ def dashboard():
         and (not type_filter or t.request_type in type_filter)
     ]
 
-    # Get unassigned tickets
+    # Filter unassigned tickets
     unassigned_tickets = [
         t
         for t in all_tickets
@@ -69,6 +72,9 @@ def dashboard():
 @bp.route("/manage-tickets", methods=["GET", "POST"])
 @login_required
 def manage_tickets():
+    """
+    Admin page to read, update and delete tickets.
+    """
     from app import db
     from app.models import Ticket, User
 
@@ -98,20 +104,18 @@ def manage_tickets():
         )
     ]
 
-    # Enable ticket deletion
+    # Handle ticket deletion
     if "delete_ticket" in request.form:
-        # Retrieve ticket from the database
         ticket_id = request.form.get("delete_ticket_id")
         delete_ticket = Ticket.query.get(ticket_id)
 
-        # Delete ticket from the database
         db.session.delete(delete_ticket)
         db.session.commit()
 
         flash("Ticket deleted successfully.", "success")
         return redirect(url_for("admin.manage_tickets"))
 
-    # Enable ticket update
+    # Populate ticket update form
     admins = User.query.filter_by(role="Admin").all()
     all_admins = [
         (admin.id, f"{admin.firstname} {admin.surname}") for admin in admins
@@ -134,12 +138,11 @@ def manage_tickets():
     form.assigned_to.choices = [("", "Select an admin")] + all_admins
     show_edit_popup = False
 
+    # Handle ticket update
     if form.validate_on_submit():
-        # Retrieve ticket from the database
         ticket_id = form.id.data
         update_ticket = Ticket.query.get(ticket_id)
 
-        # Update ticket details
         update_ticket.request_type = form.request_type.data
         update_ticket.title = form.title.data
         update_ticket.description = form.description.data
@@ -170,6 +173,9 @@ def manage_tickets():
 @bp.route("/manage-users", methods=["GET", "POST"])
 @login_required
 def manage_users():
+    """
+    Admin page to read and update users.
+    """
     from app import db
     from app.models import User
 
@@ -181,6 +187,7 @@ def manage_users():
         u for u in all_users if (not role_filter or u.role == role_filter)
     ]
 
+    # Handle user deletion
     if "delete_user" in request.form:
         # Retrieve user from the database
         user_id = request.form.get("delete_user_id")
@@ -195,12 +202,11 @@ def manage_users():
 
     form = UserForm()
 
+    # Handle user update
     if form.validate_on_submit():
-        # Retrieve user from the database
         user_id = form.id.data
         update_user = User.query.get(user_id)
 
-        # Update user details
         update_user.firstname = form.firstname.data
         update_user.surname = form.surname.data
         update_user.email = form.email.data

@@ -233,6 +233,44 @@ select#assigned_to.form-control:focus {
     color: #333;
 }
 
+.alert-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+#alertYesButton,
+#alertNoButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: auto;
+    margin-top: 0;
+}
+
+#alertYesButton {
+    background-color: #CC3300;
+    color: var(--background-color);
+}
+
+#alertYesButton:hover {
+    background-color: #A32600;
+}
+
+#alertNoButton {
+    background-color: #ddd;
+    color: #777;
+    margin-right: 0;
+}
+
+#alertNoButton:hover {
+    background-color: #ccc;
+}
+
 .submit-button,
 .feedback-button {
     background-color: #99CC00;
