@@ -4,7 +4,8 @@ User routes for the application
 
 from datetime import datetime
 
-from flask import Blueprint, flash, render_template, request, session
+from flask import Blueprint, flash, render_template, request
+from flask_login import current_user, login_required
 
 from app.forms.feedback import FeedbackForm
 from app.forms.ticket import CreateTicketForm
@@ -13,16 +14,14 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 
 
 @bp.route("/dashboard", methods=["GET", "POST"])
+@login_required
 def dashboard():
-    from app.models import Ticket, User
+    from app.models import Ticket
 
     feedback_form = FeedbackForm()
 
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
-
     # Retrieve tickets for the user
-    all_tickets = Ticket.query.filter_by(creator=user.id).all()
+    all_tickets = Ticket.query.filter_by(creator=current_user.id).all()
 
     # Retrieve tickets by status for dashboard summary
     open_tickets = [t for t in all_tickets if t.status == "Open"]
@@ -34,7 +33,7 @@ def dashboard():
     return render_template(
         "user/dashboard.html",
         feedback_form=feedback_form,
-        user=user,
+        user=current_user,
         all_tickets=all_tickets,
         open_tickets=open_tickets,
         in_progress_tickets=in_progress_tickets,
@@ -45,14 +44,12 @@ def dashboard():
 
 
 @bp.route("/create-ticket", methods=["GET", "POST"])
+@login_required
 def create_ticket():
     from app import db
-    from app.models import Ticket, User
+    from app.models import Ticket
 
     form = CreateTicketForm()
-
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
 
     if form.validate_on_submit():
 
@@ -63,7 +60,7 @@ def create_ticket():
             title=form.title.data,
             description=form.description.data,
             status="Open",
-            creator=user.id,
+            creator=current_user.id,
         )
 
         # Save new ticket to database
@@ -72,21 +69,23 @@ def create_ticket():
 
         flash("Ticket created successfully!", "success")
 
-    return render_template("user/create_ticket.html", form=form, user=user)
+    return render_template(
+        "user/create_ticket.html", form=form, user=current_user
+    )
 
 
 @bp.route("/update-ticket", methods=["GET", "POST"])
+@login_required
 def update_ticket():
     from app import db
-    from app.models import Ticket, User
+    from app.models import Ticket
 
     form = CreateTicketForm()
 
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
-
     # Retrieve tickets for the user
-    all_tickets = Ticket.query.filter_by(creator=user.id, status="Open").all()
+    all_tickets = Ticket.query.filter_by(
+        creator=current_user.id, status="Open"
+    ).all()
 
     if form.validate_on_submit():
         # Retrieve ticket from the database
@@ -103,22 +102,23 @@ def update_ticket():
         flash("Ticket updated successfully!", "success")
 
     return render_template(
-        "user/update_ticket.html", form=form, user=user, all_tickets=all_tickets
+        "user/update_ticket.html",
+        form=form,
+        user=current_user,
+        all_tickets=all_tickets,
     )
 
 
 @bp.route("/submit-feedback", methods=["POST"])
+@login_required
 def submit_feedback():
     from app import db
-    from app.models import Ticket, User
+    from app.models import Ticket
 
     form = FeedbackForm()
 
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
-
     # Retrieve tickets for the user
-    all_tickets = Ticket.query.filter_by(creator=user.id).all()
+    all_tickets = Ticket.query.filter_by(creator=current_user.id).all()
 
     if form.validate_on_submit():
         ticket_id = form.id.data
@@ -138,8 +138,14 @@ def submit_feedback():
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash(f"Error in {getattr(form, field).label.text}: {error}", "danger")
+                flash(
+                    f"Error in {getattr(form, field).label.text}: {error}",
+                    "danger",
+                )
 
     return render_template(
-        "user/dashboard.html", user=user, feedback_form=form, all_tickets=all_tickets
+        "user/dashboard.html",
+        user=current_user,
+        feedback_form=form,
+        all_tickets=all_tickets,
     )

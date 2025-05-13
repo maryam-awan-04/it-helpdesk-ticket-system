@@ -10,7 +10,9 @@ class FeedbackForm(FlaskForm):
         choices=[(str(i), str(i)) for i in range(1, 6)],
         validators=[
             DataRequired(),
-            NumberRange(min=1, max=5, message="Rating must be between 1 and 5"),
+            NumberRange(
+                min=1, max=5, message="Rating must be between 1 and 5"
+            ),
         ],
         coerce=int,
     )

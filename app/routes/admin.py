@@ -4,8 +4,8 @@ Admin routes for the application
 
 from datetime import datetime
 
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   session, url_for)
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
 from app.forms.ticket import UpdateTicketForm
 from app.forms.user import UserForm
@@ -28,26 +28,26 @@ ROLE_OPTIONS = ["User", "Admin"]
 
 
 @bp.route("/dashboard", methods=["GET"])
+@login_required
 def dashboard():
-    from app.models import Ticket, User
+    from app.models import Ticket
 
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
     all_tickets = Ticket.query.all()
 
-    # Get filters from query parameters
+    # Get filters
     status_filter = request.args.getlist("status")
     type_filter = request.args.getlist("request_type")
 
-    # Apply filters
+    # Get tickets assigned to current user
     assigned_tickets = [
         t
         for t in all_tickets
-        if t.assigned_to == user.id
+        if t.assigned_to == current_user.id
         and (not status_filter or t.status in status_filter)
         and (not type_filter or t.request_type in type_filter)
     ]
 
+    # Get unassigned tickets
     unassigned_tickets = [
         t
         for t in all_tickets
@@ -58,7 +58,7 @@ def dashboard():
 
     return render_template(
         "admin/dashboard.html",
-        user=user,
+        user=current_user,
         assigned_tickets=assigned_tickets,
         unassigned_tickets=unassigned_tickets,
         status_options=STATUS_OPTIONS,
@@ -67,20 +67,18 @@ def dashboard():
 
 
 @bp.route("/manage-tickets", methods=["GET", "POST"])
+@login_required
 def manage_tickets():
     from app import db
     from app.models import Ticket, User
 
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
-
-    # Get filters from query parameters
+    # Get filters
     status_filter = request.args.getlist("status")
     type_filter = request.args.getlist("request_type")
     assigned_to_filter = request.args.get("assigned_to")
     creator_user_filter = request.args.get("creator_user")
 
-    # Apply filters
+    # Retrieve all tickets and apply filters
     all_tickets = Ticket.query.all()
     filtered_tickets = [
         t
@@ -93,10 +91,14 @@ def manage_tickets():
         )
         and (
             not creator_user_filter
-            or (t.creator_user and str(t.creator_user.id) == creator_user_filter)
+            or (
+                t.creator_user
+                and str(t.creator_user.id) == creator_user_filter
+            )
         )
     ]
 
+    # Enable ticket deletion
     if "delete_ticket" in request.form:
         # Retrieve ticket from the database
         ticket_id = request.form.get("delete_ticket_id")
@@ -109,15 +111,23 @@ def manage_tickets():
         flash("Ticket deleted successfully.", "success")
         return redirect(url_for("admin.manage_tickets"))
 
+    # Enable ticket update
     admins = User.query.filter_by(role="Admin").all()
-    all_admins = [(admin.id, f"{admin.firstname} {admin.surname}") for admin in admins]
+    all_admins = [
+        (admin.id, f"{admin.firstname} {admin.surname}") for admin in admins
+    ]
     creators = User.query.filter(
         User.id.in_(
-            [t.creator_user.id for t in all_tickets if t.creator_user is not None]
+            [
+                t.creator_user.id
+                for t in all_tickets
+                if t.creator_user is not None
+            ]
         )
     ).all()
     all_creators = [
-        (creator.id, f"{creator.firstname} {creator.surname}") for creator in creators
+        (creator.id, f"{creator.firstname} {creator.surname}")
+        for creator in creators
     ]
 
     form = UpdateTicketForm()
@@ -147,7 +157,7 @@ def manage_tickets():
     return render_template(
         "admin/manage_tickets.html",
         form=form,
-        user=user,
+        user=current_user,
         all_tickets=filtered_tickets,
         show_edit_popup=show_edit_popup,
         status_options=STATUS_OPTIONS,
@@ -158,12 +168,10 @@ def manage_tickets():
 
 
 @bp.route("/manage-users", methods=["GET", "POST"])
+@login_required
 def manage_users():
     from app import db
     from app.models import User
-
-    user_email = session.get("user_email")
-    user = User.query.filter_by(email=user_email).first()
 
     role_filter = request.args.get("role")
 
@@ -205,7 +213,7 @@ def manage_users():
     return render_template(
         "admin/manage_users.html",
         form=form,
-        user=user,
+        user=current_user,
         all_users=filtered_users,
         role_options=ROLE_OPTIONS,
     )

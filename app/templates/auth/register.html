@@ -2,7 +2,7 @@
 {% block title %}IT Help Desk | Register{% endblock %}
 {% block content %}
     <h2>Register New Account</h2>
-    <form method="post" action="{{ url_for('auth.register') }}">
+    <form method="POST" action="{{ url_for('auth.register') }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             <label for="firstname">{{ form.firstname.label }}</label>
@@ -76,39 +76,21 @@
         </div>
     </form>
 
-    <div id="customAlert" class="custom-alert">
-        <div class="alert-content">
-            <p id="alertMessage"></p>
-            <button id="alertOkayButton" class="sign-in-button">Sign in</button>
-        </div>
-    </div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
-            const customAlert = document.getElementById("customAlert");
-            const alertMessage = document.getElementById("alertMessage");
-            const okayButton = document.getElementById("alertOkayButton");
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
 
-            function showAlert(message) {
-                alertMessage.textContent = message;
-                customAlert.style.display = "flex";
-            }
-
-            function hideAlertAndRedirect() {
-                customAlert.style.display = "none";
-                window.location.href = "{{ url_for('auth.login') }}";
-            }
-
-            if (flashes.length > 0) {
-                flashes.forEach(function(flash) {
-                    showAlert(flash[1]);
-                });
-            }
-
-            okayButton.addEventListener("click", hideAlertAndRedirect);
-        });
-    </script>
+        if (flashes.length > 0) {
+            flashes.forEach(function(flash) {
+                alert(flash[1]);
+                if (flash[0] === "success") {
+                    window.location.href = "{{ url_for('auth.login') }}";
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

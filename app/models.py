@@ -2,10 +2,12 @@
 Models for the SQLite database
 """
 
+from flask_login import UserMixin
+
 from . import db
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(150), nullable=False)
     surname = db.Column(db.String(150), nullable=False)
@@ -23,7 +25,9 @@ class Ticket(db.Model):
     status = db.Column(db.Text, nullable=False)
     date_resolved = db.Column(db.Date, nullable=True)
     feedback = db.Column(db.Text, nullable=True)
-    assigned_to = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    assigned_to = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=True
+    )
     creator = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
 
     assigned_user = db.relationship("User", foreign_keys=[assigned_to])

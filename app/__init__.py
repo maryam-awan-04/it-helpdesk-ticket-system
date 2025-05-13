@@ -7,12 +7,14 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for
 from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 from .routes import admin, auth, user
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+login_manager = LoginManager()
 
 
 def create_app():
@@ -33,6 +35,8 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = "auth.login"
 
     # Register blueprints
     app.register_blueprint(auth.bp)
@@ -45,3 +49,10 @@ def create_app():
         return redirect(url_for("auth.login"))
 
     return app
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    from app.models import User
+
+    return User.query.get(int(user_id))

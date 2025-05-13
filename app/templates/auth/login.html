@@ -2,7 +2,7 @@
 {% block title %}IT Help Desk | Sign In{% endblock %}
 {% block content %}
     <h2>Sign in</h2>
-    <form method="post" action="{{ url_for('auth.login') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
         {{ form.hidden_tag() }}
         <div class="form-group">
             <label for="email">{{ form.email.label }}</label>
