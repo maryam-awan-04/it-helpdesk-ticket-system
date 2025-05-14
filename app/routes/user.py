@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 
 from app.forms.feedback import FeedbackForm
 from app.forms.ticket import CreateTicketForm
+from app.routes.constants import REQUEST_TYPES, STATUSES
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -23,8 +24,18 @@ def dashboard():
 
     feedback_form = FeedbackForm()
 
-    # Retrieve tickets for the user
+    # Get filters
+    status_filter = request.args.getlist("status")
+    type_filter = request.args.getlist("request_type")
+
+    # Retrieve tickets for the user and apply filters
     all_tickets = Ticket.query.filter_by(creator=current_user.id).all()
+    filtered_tickets = [
+        t
+        for t in all_tickets
+        if (not status_filter or t.status in status_filter)
+        and (not type_filter or t.request_type in type_filter)
+    ]
 
     # Retrieve tickets by status for dashboard summary
     open_tickets = [t for t in all_tickets if t.status == "Open"]
@@ -37,12 +48,14 @@ def dashboard():
         "user/dashboard.html",
         feedback_form=feedback_form,
         user=current_user,
-        all_tickets=all_tickets,
+        all_tickets=filtered_tickets,
         open_tickets=open_tickets,
         in_progress_tickets=in_progress_tickets,
         on_hold_tickets=on_hold_tickets,
         resolved_tickets=resolved_tickets,
         closed_tickets=closed_tickets,
+        status_options=STATUSES,
+        request_type_options=REQUEST_TYPES,
     )
 
 

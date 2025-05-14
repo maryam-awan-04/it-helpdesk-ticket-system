@@ -9,22 +9,9 @@ from flask_login import current_user, login_required
 
 from app.forms.ticket import UpdateTicketForm
 from app.forms.user import UserForm
+from app.routes.constants import REQUEST_TYPES, ROLES, STATUSES
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
-
-STATUS_OPTIONS = ["Open", "In Progress", "On Hold", "Resolved", "Closed"]
-REQUEST_TYPE_OPTIONS = [
-    "Access Request",
-    "Hardware Issue",
-    "Software Issue",
-    "Network Issue",
-    "Security Incident",
-    "Service Request",
-    "Onboarding Request",
-    "Offboarding Request",
-    "Other",
-]
-ROLE_OPTIONS = ["User", "Admin"]
 
 
 @bp.route("/dashboard", methods=["GET"])
@@ -64,8 +51,8 @@ def dashboard():
         user=current_user,
         assigned_tickets=assigned_tickets,
         unassigned_tickets=unassigned_tickets,
-        status_options=STATUS_OPTIONS,
-        request_type_options=REQUEST_TYPE_OPTIONS,
+        status_options=STATUSES,
+        request_type_options=REQUEST_TYPES,
     )
 
 
@@ -163,8 +150,8 @@ def manage_tickets():
         user=current_user,
         all_tickets=filtered_tickets,
         show_edit_popup=show_edit_popup,
-        status_options=STATUS_OPTIONS,
-        request_type_options=REQUEST_TYPE_OPTIONS,
+        status_options=STATUSES,
+        request_type_options=REQUEST_TYPES,
         all_admins=all_admins,
         all_creators=all_creators,
     )
@@ -221,5 +208,5 @@ def manage_users():
         form=form,
         user=current_user,
         all_users=filtered_users,
-        role_options=ROLE_OPTIONS,
+        role_options=ROLES,
     )
