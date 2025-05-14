@@ -80,17 +80,17 @@
 
 {% block scripts %}
 <script>
+    // Alerts
     document.addEventListener("DOMContentLoaded", function() {
-        const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            const successFlashes = flashes.filter(flash => flash[0] === "success");
 
-        if (flashes.length > 0) {
-            flashes.forEach(function(flash) {
-                alert(flash[1]);
-                if (flash[0] === "success") {
+            if (successFlashes.length > 0) {
+                successFlashes.forEach(function(flash) {
+                    alert(flash[1]);
                     window.location.href = "{{ url_for('auth.login') }}";
-                }
-            });
-        }
-    });
+                });
+            }
+        });
 </script>
 {% endblock %}

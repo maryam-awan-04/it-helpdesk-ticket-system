@@ -1,5 +1,5 @@
 """
-User routes for the application
+User routes for the application.
 """
 
 from datetime import datetime
@@ -16,6 +16,9 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 @bp.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard():
+    """
+    User dashboard displaying all tickets created by the user.
+    """
     from app.models import Ticket
 
     feedback_form = FeedbackForm()
@@ -46,6 +49,9 @@ def dashboard():
 @bp.route("/create-ticket", methods=["GET", "POST"])
 @login_required
 def create_ticket():
+    """
+    Create a new ticket.
+    """
     from app import db
     from app.models import Ticket
 
@@ -77,6 +83,9 @@ def create_ticket():
 @bp.route("/update-ticket", methods=["GET", "POST"])
 @login_required
 def update_ticket():
+    """
+    Update an existing ticket.
+    """
     from app import db
     from app.models import Ticket
 
@@ -112,6 +121,9 @@ def update_ticket():
 @bp.route("/submit-feedback", methods=["POST"])
 @login_required
 def submit_feedback():
+    """
+    Submit feedback for a ticket.
+    """
     from app import db
     from app.models import Ticket
 

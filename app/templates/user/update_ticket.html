@@ -101,14 +101,21 @@
         </div>
     </div>
 
-    <div id="customAlert" class="custom-alert">
-        <div class="alert-content">
-            <p id="alertMessage"></p>
-            <button id="alertOkayButton">Okay</button>
-        </div>
-    </div>
-
     <script>
+        // Alerts
+        document.addEventListener("DOMContentLoaded", function() {
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            const successFlashes = flashes.filter(flash => flash[0] === "success");
+
+            if (successFlashes.length > 0) {
+                successFlashes.forEach(function(flash) {
+                    alert(flash[1]);
+                    window.location.href = "{{ url_for('user.dashboard') }}";
+                });
+            }
+        });
+
+        // Ticket selection and edit form logic
         document.addEventListener("DOMContentLoaded", function() {
             const updateTicketForm = document.getElementById("updateTicketForm");
             const submitEditDetailsButton = document.getElementById("submitEditDetails");
@@ -133,24 +140,6 @@
             };
             let selectedTicketId = null;
 
-            // Custom alert elements
-            const customAlert = document.getElementById("customAlert");
-            const alertMessage = document.getElementById("alertMessage");
-            const okayButton = document.getElementById("alertOkayButton");
-
-            function showAlert(message) {
-                alertMessage.textContent = message;
-                customAlert.style.display = "flex";
-            }
-
-            function hideAlertAndRedirect() {
-                customAlert.style.display = "none";
-                window.location.href = "{{ url_for('user.dashboard') }}";
-            }
-
-            okayButton.addEventListener("click", hideAlertAndRedirect);
-
-            // Ticket selection and edit form logic
             ticketItems.forEach(item => {
                 item.addEventListener("click", function() {
                     ticketItems.forEach(otherItem => otherItem.classList.remove("selected-ticket"));
@@ -174,6 +163,7 @@
                     ticketDetailSpans.title.textContent = title;
                     ticketDetailSpans.description.textContent = description;
 
+                    finalTicketId.value = selectedTicketId;
                     finalRequestType.value = requestType;
                     finalTitle.value = title;
                     finalDescription.value = description;
@@ -185,7 +175,7 @@
                     editDetailsButton.disabled = false;
                     updateTicketFinalButton.disabled = false;
                 } else {
-                    showAlert("Please select a ticket to update.");
+                    alert("Please select a ticket to update.");
                 }
             });
 
@@ -197,13 +187,6 @@
                 editDetailsButton.disabled = true;
                 updateTicketFinalButton.disabled = true;
             });
-
-            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
-            if (flashes.length > 0) {
-                flashes.forEach(function(flash) {
-                    showAlert(flash[1]);
-                });
-            }
         });
     </script>
 {% endblock %}

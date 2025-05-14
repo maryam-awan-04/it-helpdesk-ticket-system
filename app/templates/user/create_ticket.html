@@ -63,15 +63,19 @@
         </div>
     </div>
 
-    <div id="customAlert" class="custom-alert">
-        <div class="alert-content">
-            <p id="alertMessage"></p>
-            <button id="alertOkayButton">Back to Dashboard</button>
-        </div>
-    </div>
-
     <script>
+        // Alerts
         document.addEventListener("DOMContentLoaded", function() {
+            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
+            const successFlashes = flashes.filter(flash => flash[0] === "success");
+
+            if (successFlashes.length > 0) {
+                successFlashes.forEach(function(flash) {
+                    alert(flash[1]);
+                    window.location.href = "{{ url_for('user.dashboard') }}";
+                });
+            }
+
             const form = document.getElementById("createTicketForm");
             const submitDetailsButton = document.getElementById("submitDetails");
             const ticketDetailsSection = document.getElementById("ticketDetails");
@@ -128,29 +132,6 @@
                 editDetailsButton.disabled = true;
                 createTicketFinalButton.disabled = true;
             });
-
-            const flashes = {{ get_flashed_messages(with_categories=True) | tojson }};
-            const customAlert = document.getElementById("customAlert");
-            const alertMessage = document.getElementById("alertMessage");
-            const okayButton = document.getElementById("alertOkayButton");
-
-            function showAlert(message) {
-                alertMessage.textContent = message;
-                customAlert.style.display = "flex";
-            }
-
-            function hideAlertAndRedirect() {
-                customAlert.style.display = "none";
-                window.location.href = "{{ url_for('user.dashboard') }}";
-            }
-
-            if (flashes.length > 0) {
-                flashes.forEach(function(flash) {
-                    showAlert(flash[1]);
-                });
-            }
-
-            okayButton.addEventListener("click", hideAlertAndRedirect);
         });
     </script>
 {% endblock %}

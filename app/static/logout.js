@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButtons.forEach(button => {
         button.addEventListener("click", function(event) {
             event.preventDefault();
-            console.log("Logout button clicked");
             if (customAlert) {
                 alertMessage.textContent = "Are you sure you want to sign out?";
                 customAlert.style.display = "flex";
