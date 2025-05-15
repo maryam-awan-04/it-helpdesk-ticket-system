@@ -45,8 +45,10 @@ def register():
     from app.models import User
 
     form = RegistrationForm()
+    print("Registration form initialized")
 
     if form.validate_on_submit():
+        print("Form validated successfully")
         # Hash the password
         input_password = form.password.data
         hashed = bcrypt.generate_password_hash(input_password).decode("utf-8")
@@ -63,8 +65,11 @@ def register():
         # Save new user to database
         db.session.add(new_user)
         db.session.commit()
+        print("User registered successfully")
 
         flash("Registration successful! Please sign in.", "success")
+    else:
+        print(form.errors)
 
     return render_template("auth/register.html", form=form)
 

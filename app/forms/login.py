@@ -12,6 +12,9 @@ class LoginForm(FlaskForm):
     Form for user login
     """
 
+    class Meta:
+        csrf = False
+
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Sign in")

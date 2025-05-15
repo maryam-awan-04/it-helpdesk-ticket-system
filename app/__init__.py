@@ -17,7 +17,7 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 
 
-def create_app():
+def create_app(test_config=None):
     app = Flask(__name__)
 
     # Load environment variables

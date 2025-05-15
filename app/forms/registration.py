@@ -20,6 +20,9 @@ class RegistrationForm(FlaskForm):
     Form for user registration
     """
 
+    class Meta:
+        csrf = False
+
     firstname = StringField(
         "First Name",
         validators=[
