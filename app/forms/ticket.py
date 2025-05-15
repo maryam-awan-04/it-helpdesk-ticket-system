@@ -12,6 +12,9 @@ class CreateTicketForm(FlaskForm):
     Form for ticket creation or update
     """
 
+    class Meta:
+        csrf = False
+
     request_type = SelectField(
         "Request Type",
         choices=[
@@ -53,6 +56,9 @@ class UpdateTicketForm(FlaskForm):
     Form for ticket update
     """
 
+    class Meta:
+        csrf = False
+
     id = StringField("Ticket ID", validators=[DataRequired()])
     request_type = SelectField(
         "Request Type",
@@ -91,7 +97,7 @@ class UpdateTicketForm(FlaskForm):
 
     def validate_assigned_to(self, field):
         """
-        Validate that the assigned to field is compulsory if status is not "Open"
+        Validate that the assigned to field is compulsory if status != "Open"
         """
         if self.status.data != "Open" and not field.data:
             raise ValidationError(

@@ -17,6 +17,9 @@ class UserForm(FlaskForm):
     Form for user registration
     """
 
+    class Meta:
+        csrf = False
+
     id = IntegerField("User ID")
     firstname = StringField(
         "First Name",

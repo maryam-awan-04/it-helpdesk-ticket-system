@@ -8,15 +8,14 @@ def assert_template_renders(client, url, expected_text):
     """
     response = client.get(url)
     assert response.status_code == 200
-    for text in expected_text:
-        assert text.encode("utf-8") in response.data
+    assert expected_text.encode("utf-8") in response.data
 
 
 def test_login_get(client):
     """
     Tests that the login page renders correctly.
     """
-    expected_text = ["Sign in", "Email", "Password"]
+    expected_text = "<title>IT Help Desk | Sign In</title>"
     assert_template_renders(client, "/auth/login", expected_text)
 
 
@@ -24,7 +23,7 @@ def test_register_get(client):
     """
     Tests that the registration page renders correctly.
     """
-    expected_text = ["Register", "First Name", "Surname"]
+    expected_text = "<title>IT Help Desk | Register</title>"
     assert_template_renders(client, "/auth/register", expected_text)
 
 
@@ -126,7 +125,10 @@ def test_register_duplicate_email(client, test_app):
 
 def test_logout(client):
     """
-    Tests that the logout route redirects to the homepage.
+    Tests that the logout route redirects to the login page.
     """
     response = client.get("/auth/logout", follow_redirects=True)
     assert response.status_code == 200
+    assert_template_renders(
+        client, "/auth/login", "<title>IT Help Desk | Sign In</title>"
+    )
