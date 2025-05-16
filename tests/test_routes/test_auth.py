@@ -1,14 +1,7 @@
+from conftest import assert_template_renders
+
 from app import bcrypt, db
 from app.models import User
-
-
-def assert_template_renders(client, url, expected_text):
-    """
-    Asserts that a GET request renders correct template.
-    """
-    response = client.get(url)
-    assert response.status_code == 200
-    assert expected_text.encode("utf-8") in response.data
 
 
 def test_login_get(client):

@@ -4,6 +4,9 @@ from wtforms.validators import DataRequired, NumberRange
 
 
 class FeedbackForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     id = StringField("Ticket ID", validators=[DataRequired()])
     rating = RadioField(
         "Rating",

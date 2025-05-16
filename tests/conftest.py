@@ -4,12 +4,13 @@ Configuration for the application tests.
 
 import os
 import sys
+from datetime import datetime
+
+import pytest
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
-
-import pytest
 
 
 @pytest.fixture
@@ -65,3 +66,59 @@ def login_admin_user(client, test_app):
             follow_redirects=True,
         )
     return admin
+
+
+def assert_template_renders(client, url, expected_text):
+    """
+    Asserts that a GET request renders correct template.
+    """
+    response = client.get(url)
+    assert response.status_code == 200
+    assert expected_text.encode("utf-8") in response.data
+
+
+def create_user(
+    email="creator@example.com",
+    firstname="Creator",
+    surname="User",
+    role="User",
+    password="Pass123",
+):
+    from app import bcrypt, db
+    from app.models import User
+
+    user = User(
+        firstname=firstname,
+        surname=surname,
+        email=email,
+        password=bcrypt.generate_password_hash(password).decode("utf-8"),
+        role=role,
+    )
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
+def create_ticket(
+    creator,
+    title="Test Ticket",
+    description="This is a test ticket.",
+    status="Open",
+    request_type="Access Request",
+    assigned_to=None,
+):
+    from app import db
+    from app.models import Ticket
+
+    ticket = Ticket(
+        title=title,
+        description=description,
+        status=status,
+        request_type=request_type,
+        assigned_to=assigned_to,
+        creator_user=creator,
+        date_opened=datetime.now().date(),
+    )
+    db.session.add(ticket)
+    db.session.commit()
+    return ticket
