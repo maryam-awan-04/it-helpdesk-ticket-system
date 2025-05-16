@@ -1,28 +1,59 @@
-from conftest import assert_template_renders, create_ticket, create_user
+from conftest import create_ticket, create_user
 
 
 def test_admin_dashboard_get(client, login_admin_user):
     """
-    Tests that the admin dashboard page renders correctly.
+    Tests that the admin dashboard page renders with and without filters.
     """
-    expected_text = "<title>Admin Dashboard</title>"
-    assert_template_renders(client, "/admin/dashboard", expected_text)
+    create_ticket(
+        login_admin_user, status="Open", request_type="Access Request"
+    )
+    create_ticket(login_admin_user, status="Closed", request_type="Other")
+
+    response = client.get("/admin/dashboard")
+    assert "<title>Admin Dashboard</title>" in response.data.decode()
+
+    # With filters
+    response = client.get(
+        "/admin/dashboard?status=Open&request_type=Access Request"
+    )
+    assert "<title>Admin Dashboard</title>" in response.data.decode()
 
 
 def test_admin_manage_tickets_get(client, login_admin_user):
     """
-    Tests that the manage tickets page renders correctly.
+    Tests that the manage tickets page with and without filters.
     """
-    expected_text = "<title>Manage Tickets</title>"
-    assert_template_renders(client, "/admin/manage-tickets", expected_text)
+    create_ticket(
+        login_admin_user, status="Open", request_type="Access Request"
+    )
+    create_ticket(login_admin_user, status="Closed", request_type="Other")
+
+    # No filters
+    response = client.get("/admin/manage-tickets")
+    assert "<title>Manage Tickets</title>" in response.data.decode()
+
+    # With filters
+    response = client.get(
+        "/admin/manage-tickets?status=Open&request_type=Access Request"
+    )
+    assert "<title>Manage Tickets</title>" in response.data.decode()
 
 
-def test_manage_users_get(client, login_admin_user):
+def test_admin_manage_users_get(client, login_admin_user):
     """
-    Tests that the manage users page renders correctly.
+    Tests that the manage users page renders with and without users.
     """
-    expected_text = "<title>Manage Users</title>"
-    assert_template_renders(client, "/admin/manage-users", expected_text)
+    create_user(email="admin@gmail.com", role="Admin")
+    create_user(email="user@gmail.com", role="User")
+
+    # No filters
+    response = client.get("/admin/manage-users")
+    assert "<title>Manage Users</title>" in response.data.decode()
+
+    # With filters
+    response = client.get("/admin/manage-users?role=Admin")
+    assert "<title>Manage Users</title>" in response.data.decode()
 
 
 def test_admin_manage_tickets_edit(client, test_app, login_admin_user):

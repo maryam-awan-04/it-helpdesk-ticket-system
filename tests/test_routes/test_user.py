@@ -51,6 +51,29 @@ def test_user_create_ticket_post(client, test_app, login_admin_user):
         assert ticket.description == "This is a test ticket."
 
 
+def test_user_create_ticket_invalid_request_type(
+    client, test_app, login_admin_user
+):
+    """
+    Tests that a user cannot create a ticket with an invalid request type.
+    """
+    with test_app.app_context():
+        response = client.post(
+            "/user/create-ticket",
+            data={
+                "title": "Test Ticket",
+                "description": "This is a test ticket.",
+                "status": "Open",
+                "request_type": "Select",
+            },
+            follow_redirects=True,
+        )
+
+        assert response.status_code == 200
+        expected_text = "Please select a valid request type."
+        assert expected_text in response.data.decode()
+
+
 def test_user_update_ticket_post(client, test_app, login_admin_user):
     """
     Tests that a user can update a ticket.
