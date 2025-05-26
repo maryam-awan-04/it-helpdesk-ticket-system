@@ -1,0 +1,93 @@
+<div>
+    <button id="status-filter-toggle"><span>All</span></button>
+    <div id="status-dropdown" class="dropdown-content" style="display:none;">
+        <input type="checkbox" name="status" value="Open" />
+        <input type="checkbox" name="status" value="Closed" />
+    </div>
+
+    <button id="request-type-filter-toggle"><span>All</span></button>
+    <div id="request-type-dropdown" class="dropdown-content" style="display:none;">
+        <input type="checkbox" name="request_type" value="Access Request" />
+        <input type="checkbox" name="request_type" value="Security Incident" />
+    </div>
+
+    <button id="role-filter-toggle"><span>All</span></button>
+    <div id="role-dropdown" class="dropdown-content" style="display:none;">
+        <input type="checkbox" name="role" value="Admin" />
+        <input type="checkbox" name="role" value="User" />
+    </div>
+
+    <button id="assigned-filter-toggle"><span>All</span></button>
+    <div id="assigned-dropdown" class="dropdown-content" style="display:none;">
+        <input type="radio" name="assigned_to" value="user1" />
+        <input type="radio" name="assigned_to" value="user2" />
+    </div>
+
+    <button id="creator-filter-toggle"><span>All</span></button>
+    <div id="creator-dropdown" class="dropdown-content" style="display:none;">
+        <input type="radio" name="creator_user" value="user1" />
+        <input type="radio" name="creator_user" value="user2" />
+    </div>
+
+    <div id="editPopup" style="display:none;">
+        <button class="close-button">Close</button>
+        <form id="editTicketForm">
+        <input id="ticket_id" />
+        <input id="request_type" />
+        <input id="title" />
+        <textarea id="description"></textarea>
+        <input id="assigned_to" />
+        <input id="status" />
+        </form>
+        <form id="editUserForm">
+        <input id="user_id" />
+        <input id="firstname" />
+        <input id="surname" />
+        <input id="email" />
+        <input id="role" />
+        </form>
+    </div>
+
+    <div id="deleteConfirmationPopup" style="display:none;">
+        <button id="closeDeletePopup">Close Delete</button>
+        <button id="cancelDelete">Cancel Delete</button>
+        <input id="delete_ticket_id" />
+        <input id="delete_user_id" />
+    </div>
+
+    <button class="ticket-edit-button"
+        data-ticket-id="123"
+        data-request-type="Access Request"
+        data-title="Issue Title"
+        data-description="Issue description"
+        data-assigned-to="user1"
+        data-status="Open"
+    >Edit Ticket</button>
+
+    <button class="ticket-delete-button" data-ticket-id="123">Delete Ticket</button>
+
+    <button class="user-edit-button"
+        data-user-id="u123"
+        data-firstname="John"
+        data-surname="Doe"
+        data-email="john@example.com"
+        data-role="Admin"
+    >Edit User</button>
+
+    <button class="user-delete-button" data-user-id="u123">Delete User</button>
+
+    <input id="search-input" />
+    <button id="search-button">Search</button>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Firstname</th>
+                <th>Surname</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr><td class="firstname">John</td><td class="surname">Doe</td></tr>
+        <tr><td class="firstname">Jane</td><td class="surname">Smith</td></tr>
+        </tbody>
+    </table>
+</div>

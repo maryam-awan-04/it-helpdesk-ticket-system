@@ -1,9 +1,4 @@
 // Utility Functions
-function getQueryParam(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-}
-
 function toggleDropdown(dropdownId) {
     const dropdown = document.getElementById(dropdownId);
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
@@ -254,3 +249,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    toggleDropdown,
+    updateSelected,
+    applyDashboardFilters,
+    applyTicketFilters,
+    applyUserFilters,
+    clearFilters,
+    initialiseTicketFilters,
+    initialiseUserFilters,
+  };
+}
