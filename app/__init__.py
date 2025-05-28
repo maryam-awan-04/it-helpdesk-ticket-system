@@ -48,6 +48,12 @@ def create_app(test_config=None):
     def index():
         return redirect(url_for("auth.login"))
 
+    # Create database tables
+    with app.app_context():
+        from . import models
+
+        db.create_all()
+
     return app
 
 
