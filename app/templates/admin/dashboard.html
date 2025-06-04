@@ -7,8 +7,8 @@
             <div class="count">{% if assigned_tickets %}{{ assigned_tickets|length }}{% else %}0{% endif %}</div>
         </div>
         <div class="assigned-summary-box">
-            <h2>My Tickets In Progress</h2>
-            <div class="count">{% if in_progress_tickets %}{{ in_progress_tickets|length }}{% else %}0{% endif %}</div>
+            <h2>My Average Feedback Score</h2>
+            <div class="count">{% if average_score %}{{ average_score }}{% else %}0{% endif %}</div>
         </div>
     </div>
 
@@ -82,7 +82,16 @@
                             <td>{{ ticket.title }}</td>
                             <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">{{ ticket.description }}</td>
                             <td>{{ ticket.status }}</td>
-                            <td>{{ ticket.feedback_score }}</td>
+                            <td>
+                                <div class="star-display">
+                                    {% for i in range(ticket.feedback|int) %}
+                                        <span class="star">&#9733;</span>
+                                    {% endfor %}
+                                    {% for i in range(5 - (ticket.feedback|int)) %}
+                                        <span class="empty-star">&#9734;</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 {% else %}

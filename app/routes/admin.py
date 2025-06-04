@@ -46,11 +46,18 @@ def dashboard():
         and (not type_filter or t.request_type in type_filter)
     ]
 
+    # Retrieve admin feedback score average
+    scores = [
+        int(t.feedback) for t in assigned_tickets if t.feedback is not None
+    ]
+    average_score = sum(scores) / len(scores) if scores else 0
+
     return render_template(
         "admin/dashboard.html",
         user=current_user,
         assigned_tickets=assigned_tickets,
         unassigned_tickets=unassigned_tickets,
+        average_score=average_score,
         status_options=STATUSES,
         request_type_options=REQUEST_TYPES,
     )

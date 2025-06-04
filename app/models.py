@@ -32,3 +32,12 @@ class Ticket(db.Model):
 
     assigned_user = db.relationship("User", foreign_keys=[assigned_to])
     creator_user = db.relationship("User", foreign_keys=[creator])
+
+
+1
+3
+5
+6
+7
+9
+10

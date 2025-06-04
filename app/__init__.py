@@ -51,8 +51,18 @@ def create_app(test_config=None):
     # Create database tables
     with app.app_context():
         from . import models
+        from .data import ticket_entries, user_entries
 
         db.create_all()
+
+        for new_user in user_entries():
+            if not models.User.query.filter_by(email=new_user.email).first():
+                db.session.add(new_user)
+        db.session.commit()
+
+        for new_ticket in ticket_entries():
+            db.session.add(new_ticket)
+        db.session.commit()
 
     return app
 
