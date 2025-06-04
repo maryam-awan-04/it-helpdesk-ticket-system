@@ -53,6 +53,7 @@ def create_app(test_config=None):
         from . import models
         from .data import ticket_entries, user_entries
 
+        db.drop_all()
         db.create_all()
 
         for new_user in user_entries():
