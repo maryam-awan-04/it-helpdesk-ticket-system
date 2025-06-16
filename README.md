@@ -2,13 +2,15 @@
 
 A web-based IT Help Desk Ticketing System that enables users to submit and track support tickets, while allowing administrators to manage and resolve those tickets efficiently.
 
+Access the web application [here](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/login).
+
 
 ## 📖 Contents
 
-- [Key Features](#key-features)
-- [User Role Documentation](#user-role-documentation)
-- [Admin Role Documentation](#admin-role-documentation)
-- [Developer Guide](#developer-guide)
+- [Key Features](#🔑-key-features)
+- [User Role Documentation](#👥-user-role-documentation)
+- [Admin Role Documentation](#⚙️-admin-role-documentation)
+- [Developer Guide](#🧑‍💻-developer-guide)
 
 ## 🔑 Key Features
 
@@ -25,17 +27,17 @@ A web-based IT Help Desk Ticketing System that enables users to submit and track
 
 ### Log In
 
-1. Visit the [Login Page](/auth/login).
+1. Visit the [Login Page](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/login).
 2. Enter your email and password.
 3. Click **Sign in** to access your dashboard.
 
-> If your email is not recognised, you’ll need to [register first](/auth/register).
+> If your email is not recognised, you’ll need to [register first](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/register).
 
 ---
 
 ### Registration
 
-1. Go to the [Registration Page](/auth/register).
+1. Go to the [Registration Page](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/register).
 2. Fill in your details. Select **User** as your role.
 3. Click **Register**.
 
@@ -82,18 +84,18 @@ This information will be used to understand areas for improvement and enhance us
 
 ### Log In
 
-1. Visit the [Login Page](/auth/login).
+1. Visit the [Login Page](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/login).
 2. Enter your email and password.
 3. Click **Sign in** to access your dashboard.
 
 > You must be registered as an admin.
-> If your email is not recognised, you’ll need to [register first](/auth/register).
+> If your email is not recognised, you’ll need to [register first](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/register).
 
 ---
 
 ### Registration
 
-1. Go to the [Registration Page](/auth/register).
+1. Go to the [Registration Page](https://hissing-sara-maryam-awan-04-2cfa6604.koyeb.app/auth/register).
 2. Fill in your details. Select **Admin** as your role.
 3. Click **Register**.
 
@@ -137,10 +139,59 @@ Once logged in, you will see your dashboard. Click **Manage Users** in the navig
 
 ### Tech Stack
 
-- Flask (Backend Framework)
+- Python Flask (Backend)
+- HTML/CSS (Frontend)
 - Flask-Login (Authentication)
 - Flask-WTF (Form Validation)
 - SQLAlchemy (ORM)
 - SQLite (Database)
 - Pytest (Python testing)
 - Jest (JavaScript testing)
+
+### Getting Started
+
+1. Clone the repository
+
+```
+git clone https://github.com/your-username/it-helpdesk-ticket-system.git
+cd it-helpdesk-ticket-system
+```
+
+2. Use poetry to install the dependencies and manage virtual environments
+
+```
+poetry install
+poetry shell
+```
+
+3. Run the application
+
+```
+python3 run.py
+```
+
+### Project Structure
+
+```
+it-helpdesk-ticket-system/
+├── app/
+│   ├── __init__.py           # App factory and config loading
+│   ├── models.py             # SQLAlchemy models (e.g. User, Ticket)
+│   ├── routes/               # Routes for the app (e.g. login/register/logout)
+│   │   ├── auth.py
+│   ├── templates/            # Templates for each of the main interfaces
+│   │   ├── auth/
+│   │   ├── admin/
+│   │   ├── user/
+│   │   └── base.html         # Template base layout
+│   ├── static/
+│   │   ├── auth.css
+│   │   ├── base.css
+│   │   └── logo.png
+├── tests/
+│   ├── test_routes/          # Python tests
+│   └── test_scripts/         # JS tests
+├── run.py                    # Entry point to start the Flask app
+├── pyproject.toml            # Poetry dependency config
+└── README.md
+```
